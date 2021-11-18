@@ -91,4 +91,5 @@ AWS_HLS_URL = {cloudfront_hls_address}
 
 ```
 
-
+# pm2 scripts
+pm2 start npm -- start : npm 
