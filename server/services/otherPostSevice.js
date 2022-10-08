@@ -20,7 +20,7 @@ otherPostService.writePost = async (type, body) => {
         return jresp.sqlError();
     }
 
-    return jresp.successData({"id": result['rows']['insertId']});
+    return jresp.successData({ "id": result['rows']['insertId'] });
 };
 
 otherPostService.modifyPost = async (type, body) => {
@@ -33,14 +33,14 @@ otherPostService.modifyPost = async (type, body) => {
                 and \`type\` = :type`
 
     let sqlParams =
-        {
-            type: type,
-            id : body.id,
-            title: body.title ? body.title : "",
-            content: body.content ? body.content : "",
-            file_id: body.file_id ? body.file_id : 0,
-            user_id:body.user_id
-        }
+    {
+        type: type,
+        id: body.id,
+        title: body.title ? body.title : "",
+        content: body.content ? body.content : "",
+        file_id: body.file_id ? body.file_id : 0,
+        user_id: body.user_id
+    }
 
     let result = await db.qry(sql, sqlParams);
 
@@ -57,7 +57,7 @@ otherPostService.deletePost = async (type, id) => {
                 from other_post_meta
                 where id = :id 
                 and \`type\` = :type`
-    let sqlParams = {id: id, type: type}
+    let sqlParams = { id: id, type: type }
 
     let result = await db.qry(sql, sqlParams);
 
@@ -107,7 +107,7 @@ const getPostList = async (type, limit, offset) => {
 }
 
 
-otherPostService.getNoticePostList = async(limit, offset) => {
+otherPostService.getNoticePostList = async (limit, offset) => {
 
     return await getPostList("notice", limit, offset);
 }
@@ -119,17 +119,14 @@ otherPostService.searchNoticePostList = async (limit, offset, keyword) => {
                 where \`type\` = 'notice'
                 `
 
-    let searchQry = _util.createConditionQryForSearch( "concat(title, ' ', content)","and", keyword, "and")
+    let searchQry = _util.createConditionQryForSearch("concat(title, ' ', content)", "and", keyword, "and")
 
     let order = ` order by create_at desc, id desc
-                limit ${limit} offset ${offset-1} `
+                limit ${limit} offset ${offset - 1} `
 
     let sql = head + searchQry + order;
 
-    console.log(sql);
-
     let result = await db.qry(sql);
-
     let chk = _util.selectChkFromDB(result);
 
     if (chk < 0) {
@@ -171,17 +168,14 @@ otherPostService.searchSuggestPostList = async (limit, offset, keyword) => {
                 where \`type\` = 'suggest'
                 `
 
-    let searchQry = _util.createConditionQryForSearch( "concat(a.title, ' ', a.content, ' ', b.nickname)","and", keyword, "and")
+    let searchQry = _util.createConditionQryForSearch("concat(a.title, ' ', a.content, ' ', b.nickname)", "and", keyword, "and")
 
     let order = ` order by create_at desc, id desc
-                limit ${limit} offset ${offset-1} `
+                limit ${limit} offset ${offset - 1} `
 
     let sql = head + searchQry + order;
 
-    console.log(sql);
-
     let result = await db.qry(sql);
-
     let chk = _util.selectChkFromDB(result);
 
     if (chk < 0) {
@@ -201,7 +195,6 @@ otherPostService.searchSuggestPostList = async (limit, offset, keyword) => {
                 where \`type\` = 'suggest' `
 
     result = await db.qry(sql2 + searchQry)
-
     chk = _util.selectChkFromDB(result);
 
     if (chk < 1) {
@@ -224,15 +217,14 @@ otherPostService.searchIntroPostList = async (limit, offset, keyword) => {
                 where \`type\` = 'intro'
                 `
 
-    let searchQry = _util.createConditionQryForSearch( "concat(title)","and", keyword, "and")
+    let searchQry = _util.createConditionQryForSearch("concat(title)", "and", keyword, "and")
 
     let order = ` order by create_at desc, id desc
-                limit ${limit} offset ${offset-1} `
+                limit ${limit} offset ${offset - 1} `
 
     let sql = head + searchQry + order;
 
     let result = await db.qry(sql);
-
     let chk = _util.selectChkFromDB(result);
 
     if (chk < 0) {
@@ -250,7 +242,6 @@ otherPostService.searchIntroPostList = async (limit, offset, keyword) => {
                 where \`type\` = 'intro' `
 
     result = await db.qry(sql2 + searchQry)
-
     chk = _util.selectChkFromDB(result);
 
     if (chk < 1) {
@@ -277,7 +268,7 @@ otherPostService.readPostDetail = async (type, id) => {
 
     if (type === "intro") {
         otherParams = ", (select uuid from files where id = a.file_id) as file " +
-                    ", (select name from files where id = a.file_id) as name "
+            ", (select name from files where id = a.file_id) as name "
     }
 
     let sql = `select id, title, content, create_at, update_at
@@ -287,7 +278,6 @@ otherPostService.readPostDetail = async (type, id) => {
                 and id = ${id};
                 `
     let result = await db.qry(sql);
-
     let chk = _util.selectChkFromDB(result);
 
     if (chk < 1) {

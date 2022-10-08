@@ -10,7 +10,6 @@ router.get("/replied/post", async (req, res) => {
     let offset = req.query.offset;
 
     if (!_util.areBeyondZero(limit, offset)) {
-        // console.log("not zero");
         return res.json(jresp.invalidData());
     }
 
@@ -26,7 +25,6 @@ router.get("/recommend/post", async (req, res) => {
     let offset = req.query.offset;
 
     if (!_util.areBeyondZero(limit, offset)) {
-        // console.log("not zero");
         return res.json(jresp.invalidData());
     }
 
@@ -42,7 +40,6 @@ router.get("/scored/post", async (req, res) => {
     let offset = req.query.offset;
 
     if (!_util.areBeyondZero(limit, offset)) {
-        // console.log("not zero");
         return res.json(jresp.invalidData());
     }
 

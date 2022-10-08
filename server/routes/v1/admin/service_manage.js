@@ -148,9 +148,8 @@ router.post("/intro/modify", async (req, res) => {
 
     let body = req.body;
     let type = "intro"
-    body.user_id = req.uinfo["u"];
 
-    console.log("modify")
+    body.user_id = req.uinfo["u"];
 
     if (!_util.isBeyondZero(body.id)) {
         return res.json(jresp.invalidData());

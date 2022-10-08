@@ -5,6 +5,7 @@ const http = axios.create({
 });
 
 
+// pg사 아임포트 클래스
 class Import {
 
     constructor() {
@@ -28,14 +29,14 @@ class Import {
                 }
             })
 
-            const {access_token} = res.data.response; // 인증 토큰
+            const { access_token } = res.data.response; // 인증 토큰
 
             return access_token;
         }
-       catch (e) {
+        catch (e) {
             // console.log(e)
             return null;
-       }
+        }
     }
 
     async getPaymentData(impUid) {
@@ -61,15 +62,15 @@ class Import {
 
             let item = {
                 success: true,
-                "imp_uid" : impUid,
-                "merchant_uid" : resp.merchant_uid,
+                "imp_uid": impUid,
+                "merchant_uid": resp.merchant_uid,
                 "name": resp.name,
                 "amount": resp.amount,
                 "paid_at": resp.paid_at,
                 "pay_method": resp.pay_method,
                 "status": resp.status,
-                "card_name" : resp.card_name,
-                "card_number" : resp.card_number,
+                "card_name": resp.card_name,
+                "card_number": resp.card_number,
                 // "goods_category" : resp.custom_data.goods_category
             }
 
@@ -78,7 +79,7 @@ class Import {
 
         catch (e) {
 
-            let item = {success: false, ...e.response.data }
+            let item = { success: false, ...e.response.data }
 
             return item;
         }
@@ -87,8 +88,8 @@ class Import {
     async refund(orderInfo) {
 
         let data = {
-            "imp_uid" : orderInfo["imp_uid"],
-            "merchant_uid" : orderInfo["merchant_uid"],
+            "imp_uid": orderInfo["imp_uid"],
+            "merchant_uid": orderInfo["merchant_uid"],
             "amount": orderInfo["amount"], // 가맹점 클라이언트로부터 받은 환불금액
             "checksum": orderInfo["checksum"], // 환불 가능 금액
             "reason": orderInfo["reason"],
@@ -118,16 +119,16 @@ class Import {
 
             if (!res.response) {
 
-                return {success : false, ...res}
+                return { success: false, ...res }
             }
             else {
-                return {success : true, ...res}
+                return { success: true, ...res }
             }
         }
 
         catch (e) {
 
-            return {success: false, ...e.response.data }
+            return { success: false, ...e.response.data }
 
             // console.log(e)
         }

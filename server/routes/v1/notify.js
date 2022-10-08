@@ -10,19 +10,15 @@ router.get("/list", async (req, res) => {
     let offset = req.query.offset;
     let isReading = req.query.is_reading;
 
-    console.log(req.query );
-
     if (!_util.areBeyondZero(limit, offset)) {
         return res.json(jresp.invalidData());
     }
 
     if (!_util.isNum(isReading)) {
-        console.log("not num");
         return res.json(jresp.invalidData());
     }
 
     if (isReading < -1 || isReading > 1) {
-        console.log("dd");
         return res.json(jresp.invalidData());
     }
 
@@ -37,15 +33,12 @@ router.get("/total", async (req, res) => {
     let uid = req.uinfo["u"]
     let isReading = req.query.is_reading;
 
-    console.log(isReading);
-
     if (!_util.isNum(isReading)) {
         console.log("not num");
         return res.json(jresp.invalidData());
     }
 
     if (isReading < -1 || isReading > 1) {
-        console.log("dd");
         return res.json(jresp.invalidData());
     }
 
@@ -55,7 +48,7 @@ router.get("/total", async (req, res) => {
         return res.json(jresp.sqlError());
     }
 
-    return res.json(jresp.successData({total : result}));
+    return res.json(jresp.successData({ total: result }));
 });
 
 

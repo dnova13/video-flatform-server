@@ -31,7 +31,7 @@ router.get("/chart", async (req, res) => {
 
 
 // 새로운 크레이터
-router.get("/newCreator", async (req, res) => {
+router.get("/new-creator", async (req, res) => {
 
     let limit = req.query.limit;
     let offset = req.query.offset;
@@ -50,7 +50,6 @@ router.get("/newCreator", async (req, res) => {
         `limit ${limit} offset ${offset - 1} `;
 
     let result = await db.qry(sql);
-    // console.log(result);
 
     if (!result['success']) {
         return res.json(jresp.sqlError());
@@ -79,7 +78,7 @@ router.get("/newCreator", async (req, res) => {
     try {
         cnt = result["rows"][0]["cnt"];
     } catch (err) {
-        // console.log(err.message);
+        console.log(err.message);
     }
 
     return res.json(jresp.successData(data, data.length, cnt));
@@ -100,7 +99,7 @@ router.get("/curation", async (req, res) => {
         " , ifnull((select duration from files where `uuid` = b.video and file_type = 1  limit 1),0) as duration " +
         " , b.create_at, b.update_at " +
         "from ( " +
-            `select b.video_post_id, b.parent_id 
+        `select b.video_post_id, b.parent_id 
                        , b.id
                        , a.title as curation_title
                 from video_manager a
@@ -136,9 +135,6 @@ router.get("/curation", async (req, res) => {
     for (let item of data) {
 
         if (i === 0) {
-
-            // console.log(item);
-
             __data.id = item.parent_id;
             __data.title = item.curation_title;
         }
@@ -177,7 +173,6 @@ router.get("/pick", async (req, res) => {
                 limit ${limit} offset ${offset - 1} 
                 `
     let result = await db.qry(sql);
-    // console.log(result);
 
     if (!result['success']) {
         return res.json(jresp.sqlError());
@@ -367,7 +362,7 @@ router.get("/tags", async (req, res) => {
                         ),0) as total ` : "";
 
     let condition = " from video_post a  " +
-                    `where json_extract(if(tags = '',null,tags), JSON_UNQUOTE(JSON_SEARCH(tags, 'one', '${_tag}'))) is not null 
+        `where json_extract(if(tags = '',null,tags), JSON_UNQUOTE(JSON_SEARCH(tags, 'one', '${_tag}'))) is not null 
                      and a.blind_chk = 0`;
 
 
@@ -377,7 +372,7 @@ router.get("/tags", async (req, res) => {
 
     sql = head + subQry + condition + orderBy + tail;
 
-    console.log("sql ", sql);
+    // console.log("sql ", sql);
 
     let result = await db.qry(sql);
     // console.log(result);
@@ -411,7 +406,6 @@ async function getTotalTagList(_tag) {
                  and blind_chk = 0 `;
 
     let result = await db.qry(sql2);
-    console.log(result);
 
     if (!result['success'] || result['rows'].length < 1) {
         return 0;
@@ -529,7 +523,7 @@ router.get("/dibs", async (req, res) => {
         "and a.blind_chk = 0 " +
         `order by b.create_at desc limit ${limit} offset ${offset - 1}`
 
-    let sqlParams = {uid: uid};
+    let sqlParams = { uid: uid };
 
     let result = await db.qry(sql, sqlParams);
 
@@ -563,7 +557,7 @@ async function getTotalDibsList(uid) {
         "where b.user_id = :uid " +
         "and b.`type` = 'dibs' " +
         "and a.blind_chk = 0 "
-    let sqlP = {uid: uid};
+    let sqlP = { uid: uid };
 
     let result = await db.qry(sql2, sqlP);
     console.log(result);
@@ -605,15 +599,15 @@ router.post("/check/:type", async (req, res) => {
 
     switch (result) {
 
-        case 0 :
+        case 0:
             result = await chkVideoMeta(mType, uid, videoPostId);
             break;
 
-        case 1 :
+        case 1:
             result = await unChkVideoMeta(mType, uid, videoPostId);
             break;
 
-        default :
+        default:
             return res.json(jresp.sqlError());
     }
 
@@ -628,19 +622,19 @@ async function getListDailyChart(_type, limit, offset) {
 
     switch (_type) {
 
-        case 1 :
+        case 1:
             condition = `order by view_rate desc, like_rate desc, video_post_id desc limit ${limit} offset ${offset - 1}`
             break;
         case 2:
             condition = `order by like_rate + 60  + view_rate+ 40  desc, like_rate desc, view_rate desc, video_post_id desc limit ${limit} offset ${offset - 1}`
             break;
 
-        default :
+        default:
             return jresp.invalidData();
     }
 
     let sql = util.format(
-            `SELECT a.id, a.view_cnt  
+        `SELECT a.id, a.view_cnt  
                      , like_cnt   
                      , ifnull(ROUND(a.score_sum/a.score_cnt, 2), 0) as score  
                      , title   
@@ -668,8 +662,6 @@ async function getListDailyChart(_type, limit, offset) {
         "on a.id = b.video_post_id where a.blind_chk = 0", condition);
 
     result = await db.qry(sql);
-    console.log(sql);
-    console.log(result);
 
     if (!result['success']) {
         return jresp.sqlError();
@@ -699,7 +691,7 @@ async function isChkVideoMeta(uid, type, videoPostId) {
         "and `type` = :type " +
         "and video_post_id = :video_post_id "
 
-    let sqlParams = {user_id: uid, type: type, video_post_id: videoPostId}
+    let sqlParams = { user_id: uid, type: type, video_post_id: videoPostId }
     let result = await db.qry(sql, sqlParams);
 
     if (!result['success'] || result['rows'].length < 1) {
@@ -715,7 +707,7 @@ async function chkVideoMeta(type, uid, videoPostId) {
 
     let sql = "INSERT INTO video_post_meta (`type`, user_id, video_post_id) " +
         "VALUES(:type, :user_id, :video_post_id) "
-    let sqlParams = {user_id: uid, type: type, video_post_id: videoPostId}
+    let sqlParams = { user_id: uid, type: type, video_post_id: videoPostId }
 
     let result = await db.qry(sql, sqlParams);
 
@@ -731,9 +723,7 @@ async function chkVideoMeta(type, uid, videoPostId) {
 
     result = await db.qry(sql2)
 
-    console.log(result['rows']['affectedRows']);
-
-    return jresp.successData({chk: true});
+    return jresp.successData({ chk: true });
 }
 
 async function unChkVideoMeta(type, uid, videoPostId) {
@@ -744,7 +734,7 @@ async function unChkVideoMeta(type, uid, videoPostId) {
         "where video_post_id = :video_post_id " +
         "and user_id = :user_id " +
         "and `type` = :type ";
-    let sqlParams = {user_id: uid, type: type, video_post_id: videoPostId}
+    let sqlParams = { user_id: uid, type: type, video_post_id: videoPostId }
 
     let result = await db.qry(sql, sqlParams);
 
@@ -760,9 +750,7 @@ async function unChkVideoMeta(type, uid, videoPostId) {
 
     result = await db.qry(sql2);
 
-    console.log(result['rows']['affectedRows']);
-
-    return jresp.successData({chk: false});
+    return jresp.successData({ chk: false });
 }
 
 

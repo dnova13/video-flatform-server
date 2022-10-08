@@ -6,8 +6,6 @@ const videoReplySv = require("../../services/videoReplyService");
 
 router.get("/list", async (req, res) => {
 
-    console.log("relist");
-
     let uid = req.uinfo["u"];
 
     let limit = req.query.limit;
@@ -25,9 +23,8 @@ router.get("/list", async (req, res) => {
 
 router.get("/re/list", async (req, res) => {
 
-    console.log("relist");
-
     let uid = req.uinfo["u"];
+
     let limit = req.query.limit;
     let offset = req.query.offset;
     let postId = req.query.id;
@@ -43,8 +40,6 @@ router.get("/re/list", async (req, res) => {
 });
 
 router.get("/list/all", async (req, res) => {
-
-    console.log("list");
 
     let uid = req.uinfo["u"];
 
@@ -89,8 +84,6 @@ router.post("/write", async (req, res) => {
 
     body.user_id = req.uinfo["u"];
 
-    console.log(body);
-
     result = await videoReplySv.insertReply(body);
 
     if (!result["success"]) {
@@ -101,7 +94,6 @@ router.post("/write", async (req, res) => {
     let uid = body.user_id;
     let videoPostId = body.id;
 
-    console.log("#####################################")
 
     // fcm 메시징.
     await notifySv.notifyReply(uid, videoPostId);
@@ -135,8 +127,6 @@ router.post("/re/write", async (req, res) => {
     }
 
     body.user_id = req.uinfo["u"];
-
-    console.log(body);
 
     result = await videoReplySv.insertReply(body, 1);
 
@@ -181,8 +171,6 @@ router.post("/re/answer/write", async (req, res) => {
     }
 
     body.user_id = req.uinfo["u"];
-
-    console.log(body);
 
     result = await videoReplySv.insertReply(body, 2);
 
@@ -229,8 +217,6 @@ router.post("/edit", async (req, res) => {
 
     body.user_id = req.uinfo["u"];
 
-    console.log(body);
-
     result = await videoReplySv.editReply(body);
 
     if (!result["success"]) {
@@ -239,7 +225,6 @@ router.post("/edit", async (req, res) => {
     }
 
     return res.json(result);
-
 });
 
 
@@ -263,7 +248,6 @@ router.post("/delete", async (req, res) => {
 
     body.user_id = req.uinfo["u"];
 
-    // console.log(body);
     result = await videoReplySv.deleteReply(body);
 
     if (!result["success"]) {

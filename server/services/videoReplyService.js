@@ -4,10 +4,11 @@ videoReplyService.getLv0ReplyListByPostId = async (limit, offset, postId, blindC
 
     let result;
     let qr = {
-        id : postId,
-        limit : limit,
-        offset : offset
+        id: postId,
+        limit: limit,
+        offset: offset
     };
+
     let blindParam = " , a.blind_chk ";
     let blindCondition = "";
 
@@ -29,6 +30,7 @@ videoReplyService.getLv0ReplyListByPostId = async (limit, offset, postId, blindC
         "and video_post_id = :id   " + blindCondition +
         "order by a.create_at desc   " +
         `limit ${qr.limit} offset ${qr.offset - 1} `;
+
     let sqlParams = {
         id: qr.id
     }
@@ -43,8 +45,6 @@ videoReplyService.getLv0ReplyListByPostId = async (limit, offset, postId, blindC
         return jresp.emptyData()
     }
 
-    // console.log(result);
-
     let data = result["rows"];
 
     for (let item of data) {
@@ -57,7 +57,6 @@ videoReplyService.getLv0ReplyListByPostId = async (limit, offset, postId, blindC
     }
 
     let total = await videoReplyService.getTotalReply(qr.id);
-    // console.log(total);
 
     return jresp.successData(data, data.length, total);
 }
@@ -66,9 +65,9 @@ videoReplyService.getReReplyListByPostId = async (limit, offset, postId, replyId
 
     let result;
     let qr = {
-        id : postId,
-        limit : limit,
-        offset : offset,
+        id: postId,
+        limit: limit,
+        offset: offset,
         reply_id: replyId
     };
     let blindParam = " , a.blind_chk ";
@@ -80,9 +79,9 @@ videoReplyService.getReReplyListByPostId = async (limit, offset, postId, replyId
     }
 
     let sql = "select a.id, video_post_id, reply_lv, content " +
-            " , a.user_id, b.icon, b.nickname " +
-            " , a.target_id, (select nickname from `user` where id = a.target_id ) as target_nickname " +
-            " , a.create_at, a.update_at  " + blindParam +
+        " , a.user_id, b.icon, b.nickname " +
+        " , a.target_id, (select nickname from `user` where id = a.target_id ) as target_nickname " +
+        " , a.create_at, a.update_at  " + blindParam +
         "from reply_at_video a " +
         "inner join `user` b " +
         "on a.user_id = b.id " +
@@ -105,7 +104,6 @@ videoReplyService.getReReplyListByPostId = async (limit, offset, postId, replyId
         return jresp.emptyData();
     }
 
-    // console.log(result);
 
     let data = result["rows"];
 
@@ -121,7 +119,6 @@ videoReplyService.getReReplyListByPostId = async (limit, offset, postId, replyId
 
     let total = await videoReplyService.getTotalReReply(qr.id, qr.reply_id);
 
-    // console.log(total);
     return jresp.successData(data, data.length, total);
 
 }
@@ -130,9 +127,9 @@ videoReplyService.getReplyAllListByPostId = async (limit, offset, postId, blindC
 
     let result;
     let qr = {
-        id : postId,
-        limit : limit,
-        offset : offset
+        id: postId,
+        limit: limit,
+        offset: offset
     };
     let blindParam = " , a.blind_chk ";
     let blindCondition = "";
@@ -177,17 +174,15 @@ videoReplyService.getReplyAllListByPostId = async (limit, offset, postId, blindC
         return jresp.emptyData();
     }
 
-    // console.log(result);
-
     let data = result["rows"];
     let reSum = 0;
 
     for (let item of data) {
 
         let sql2 = "select a.id, video_post_id, reply_lv, content " +
-                    " , a.user_id, b.icon, b.nickname " +
-                    " , a.target_id, (select nickname from `user` where id = a.target_id ) as target_nickname " +
-                    ` , (
+            " , a.user_id, b.icon, b.nickname " +
+            " , a.target_id, (select nickname from `user` where id = a.target_id ) as target_nickname " +
+            ` , (
                          select count(*) as cnt
                         from creator cr
                         inner join creator_apply ap
@@ -195,7 +190,7 @@ videoReplyService.getReplyAllListByPostId = async (limit, offset, postId, blindC
                         and cr.user_id = a.user_id
                         and ap.status = 1
                         ) as is_creator ` +
-                    " , a.create_at, a.update_at  " + blindParam +
+            " , a.create_at, a.update_at  " + blindParam +
             "from reply_at_video a " +
             "inner join `user` b " +
             "on a.user_id = b.id " +
@@ -208,13 +203,11 @@ videoReplyService.getReplyAllListByPostId = async (limit, offset, postId, blindC
             reply_id: item.id
         }
 
-        let result2= await db.qry(sql2, sqlParams2);
+        let result2 = await db.qry(sql2, sqlParams2);
 
         if (!result2['success']) {
             return jresp.sqlError();
         }
-
-        // console.log("re2" , result2);
 
         let data2 = result2["rows"];
 
@@ -244,9 +237,6 @@ videoReplyService.getReplyAllListByPostId = async (limit, offset, postId, blindC
     let total = await videoReplyService.getTotalReply(qr.id, blindChk);
     let allTotal = await videoReplyService.getTotalAllReply(qr.id, blindChk)
 
-    // console.log(allTotal)
-    // console.log(total);
-
     return jresp.successData(data, data.length, allTotal, total)
 }
 
@@ -265,7 +255,6 @@ videoReplyService.getTotalReply = async (_id, blindChk) => {
         `where reply_ref = 0 and video_post_id = ${_id} ${blindCondition}`
 
     let result = await db.qry(sql);
-    // console.log(result);
 
     if (!result['success'] || result['rows'].length < 1) {
         return 0;
@@ -290,7 +279,6 @@ videoReplyService.getTotalAllReply = async (_id, blindChk) => {
         `where video_post_id = ${_id} ${blindCondition}`
 
     let result = await db.qry(sql);
-    // console.log(result);
 
     if (!result['success'] || result['rows'].length < 1) {
         return 0;
@@ -306,7 +294,6 @@ videoReplyService.getTotalReReply = async (_id, replyId) => {
         `where reply_ref = ${replyId} and video_post_id = ${_id} `
 
     let result = await db.qry(sql);
-    // console.log(result);
 
     if (!result['success'] || result['rows'].length < 1) {
         return 0;
@@ -331,7 +318,6 @@ videoReplyService.insertReply = async (body, lv) => {
     }
 
     let result = await db.qry(sql, sqlParams);
-    console.log(result);
 
     if (!result['success'] || result['rows'].length < 1) {
         return jresp.sqlError();
@@ -342,9 +328,8 @@ videoReplyService.insertReply = async (body, lv) => {
         `where id = ${body.id} `
 
     let result2 = await db.qry(sql2)
-    console.log(result2['rows']['affectedRows']);
 
-    return jresp.successData({id: result['rows']['insertId']});
+    return jresp.successData({ id: result['rows']['insertId'] });
 }
 
 
@@ -391,7 +376,6 @@ videoReplyService.deleteReply = async (body) => {
     let result2 = await db.qry(sql2);
 
     console.log(result2);
-
     console.log(result2['rows'] ? result2['rows']['affectedRows'] : "del fail");
 
 
@@ -404,8 +388,6 @@ videoReplyService.deleteReply = async (body) => {
     }
 
     let result = await db.qry(sql, sqlParams);
-
-    console.log(result)
 
     if (!result['success'] || result["rows"]["affectedRows"] < 1) {
         return jresp.sqlError();
@@ -426,18 +408,18 @@ const updateVideoReplyBlindChk = async (id, chk) => {
         return jresp.sqlError()
     }
 
-    return jresp.successData({chk: chk});
+    return jresp.successData({ chk: chk });
 }
 
 
 videoReplyService.chkVideoReplyBlind = async (id) => {
 
-    return await updateVideoReplyBlindChk(id,true)
+    return await updateVideoReplyBlindChk(id, true)
 }
 
 videoReplyService.unchkVideoReplyBlind = async (id) => {
 
-    return await updateVideoReplyBlindChk(id,false)
+    return await updateVideoReplyBlindChk(id, false)
 }
 
 

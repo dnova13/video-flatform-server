@@ -30,7 +30,7 @@ const admin = require('./admin')
 
 const oauthChk = require('./oauth_check');
 
-router.get('/', async(req, res) => {
+router.get('/', async (req, res) => {
 
     return res.json(jresp.successData());
 })
@@ -47,10 +47,10 @@ router.use('/test', test)
 // auth check
 router.use(oauthChk);
 
-router.use('/videoPost', videoMeta);
-router.use('/videoPost', videoPost);
-router.use('/videoPost/list', videoList);
-router.use('/videoPost/reply', videoReply);
+router.use('/video-post', videoMeta);
+router.use('/video-post', videoPost);
+router.use('/video-post/list', videoList);
+router.use('/video-post/reply', videoReply);
 router.use('/report', report);
 
 router.use('/tags', tags);

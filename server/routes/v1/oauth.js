@@ -17,8 +17,6 @@ router.post("/signin", async (req, res) => {
         return res.json(jresp.invalidData());
     }
 
-    console.log(body.id, body.type);
-
     if (body['type'] === 'normal') {
 
         if (_util.isBlanks(body['id'], body["password"])) {
@@ -26,13 +24,13 @@ router.post("/signin", async (req, res) => {
         }
 
         sql = 'select a.user_id, b.retire_chk, b.suspend_chk, b.lv ' +
-                'from oauth a ' +
-                'inner join `user` b ' +
-                'on a.user_id  = b.id ' +
-                'where a.app_id = :id ' +
-                'and a.oauth_type = :type ' +
-                'and a.password = password(:pw) ';
-        sqlP = {id: body['id'], pw: body["password"], type: body['type']}
+            'from oauth a ' +
+            'inner join `user` b ' +
+            'on a.user_id  = b.id ' +
+            'where a.app_id = :id ' +
+            'and a.oauth_type = :type ' +
+            'and a.password = password(:pw) ';
+        sqlP = { id: body['id'], pw: body["password"], type: body['type'] }
 
         result = await db.qry(sql, sqlP)
 
@@ -58,7 +56,7 @@ router.post("/signin", async (req, res) => {
             'on a.user_id  = b.id ' +
             'where a.app_id = :id ' +
             'and a.oauth_type = :type '
-        sqlP = {id: body['id'], type: body['type']}
+        sqlP = { id: body['id'], type: body['type'] }
 
         result = await db.qry(sql, sqlP)
 
@@ -88,7 +86,7 @@ router.post("/signin", async (req, res) => {
 
     let jwtObj = {
         u: result['rows'][0]['user_id']
-        ,l: result['rows'][0]['lv']
+        , l: result['rows'][0]['lv']
     }
 
     let token = await jwt.register(jwtObj)
@@ -110,13 +108,13 @@ router.post("/signup", async (req, res) => {
     let body = req.body
     let out;
 
-    out = await signup(body);
+    out = await userMngSv.signup(body);
 
     await dailyStSv.dailyChkStatistics("join");
     return res.json(out);
 });
 
-router.post("/duplicateNickname", async (req, res) => {
+router.post("/duplicate-nickname", async (req, res) => {
 
     let body = req.body;
     let result;
@@ -125,11 +123,11 @@ router.post("/duplicateNickname", async (req, res) => {
         return res.json(jresp.invalidData())
     }
 
-    result = await checkDuplicateNickname(body['nickname'])
+    result = await userMngSv.checkDuplicateNickname(body['nickname'])
     res.send(result)
 });
 
-router.post("/duplicatePhone", async (req, res) => {
+router.post("/duplicate-phone", async (req, res) => {
 
     let body = req.body;
     let result;
@@ -138,11 +136,11 @@ router.post("/duplicatePhone", async (req, res) => {
         return res.json(jresp.invalidData())
     }
 
-    result = await checkDuplicatePhone(body['phone'])
+    result = await userMngSv.checkDuplicatePhone(body['phone'])
     res.send(result)
 });
 
-router.post("/duplicateEmail", async (req, res) => {
+router.post("/duplicate-email", async (req, res) => {
 
     let body = req.body;
     let result;
@@ -151,7 +149,7 @@ router.post("/duplicateEmail", async (req, res) => {
         return res.json(jresp.invalidData())
     }
 
-    result = await checkDuplicateEmail(body['email'])
+    result = await userMngSv.checkDuplicateEmail(body['email'])
     res.send(result)
 });
 
@@ -169,7 +167,7 @@ router.post("/update/fcmtoken", async (req, res) => {
     return res.json(result);
 });
 
-router.post("/chkSlang", async (req, res) => {
+router.post("/chk-slang", async (req, res) => {
 
     let body = req.body;
 
@@ -177,184 +175,11 @@ router.post("/chkSlang", async (req, res) => {
         return res.json(jresp.invalidData())
     }
 
-    let str = body['str'].replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]|(?:\s)+|\s{2,}/gi,"");
-
-    console.log(str);
-
-    let result = await chkSlang(str);
+    let str = body['str'].replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]|(?:\s)+|\s{2,}/gi, "");
+    let result = await userMngSv.chkSlang(str);
 
     res.send(result)
 });
-
-
-async function chkSlang(str) {
-
-    let sql = `select count(*) as cnt
-                from others_meta 
-                where \`type\` = 'slang'
-                and '${str}' like concat('%', value ,'%')`
-
-    let result = await db.qry(sql);
-    let chk = _util.selectChkFromDB(result);
-
-    if (chk < 1) {
-        return jresp.sqlError();
-    }
-
-    return jresp.successData({is_slang : result["rows"][0]["cnt"] > 0});
-}
-
-
-async function signup(body) {
-
-    let sql;
-    let sqlParams;
-    let result;
-    let keys = ['name', 'nickname', 'birth', 'phone', 'address', 'email', 'type', 'app_id'];
-
-    if (!_util.hasKeysArray(body, keys)) {
-
-        console.log("key err");
-        return jresp.invalidData();
-    }
-
-    if (_util.isObjectBlankArray(body, keys, keys.length)) {
-        console.log("blank err");
-        return jresp.invalidData();
-    }
-
-    sql = "INSERT INTO `user` (`name`, nickname, birth, phone, address, email, icon, gender)" +
-        "VALUES(:name, :nickname, :birth, :phone, :addr, :email, :icon, :gender) "
-    sqlParams = {
-        name: body['name']
-        , nickname: body['nickname']
-        , birth: body['birth']
-        , phone: body['phone']
-        , addr: body['address']
-        , email: body['email']
-        , icon: body['icon'] ? body['icon'] : 0
-        , gender: body['gender'] ? body['gender'] : 1
-    }
-
-    result = await db.qry(sql, sqlParams)
-
-    if (!result['success'] || result['rows'].length < 1) {
-        console.log(result)
-        return jresp.sqlError(result.message);
-    }
-    console.log("result ", result['rows']);
-    const uid = result['rows']['insertId']
-
-    console.log("아이디", uid);
-
-    sql = "INSERT INTO oauth (oauth_type, app_id, `password`, user_id) " +
-        "VALUES(:type, :app_id, password(:pw), :uid) ";
-    sqlParams = {
-        type: body['type']
-        , app_id: body['app_id']
-        , pw: body['password'] ? body['password'] : null
-        , uid: uid
-    }
-
-    result = await db.qry(sql, sqlParams)
-
-    if (!result['success'] || result['rows'].length < 1) {
-
-        return jresp.sqlError();
-    }
-
-    return jresp.successData();
-}
-
-async function checkDuplicateEmail(email) {
-
-    let sql;
-    let sqlP;
-    let result;
-
-    sql = "select count(*) as cnt " +
-            "from `user` " +
-            "where email = :email";
-    sqlP = {email: email}
-
-    result = await db.qry(sql, sqlP)
-
-    // sql err
-    if (!result['success']) {
-        console.error(result)
-        return jresp.sqlError();
-    }
-
-    if (result['rows'].length < 1) {
-        return jresp.sqlError();
-    }
-
-    if (result["rows"][0]["cnt"] < 1) {
-        return jresp.successData();
-    }
-
-    return jresp.duplicateData();
-}
-
-async function checkDuplicateNickname(nickname) {
-
-    let sql;
-    let sqlP;
-    let result;
-
-    sql = "select count(*) as cnt " +
-        "from `user` " +
-        "where nickname = :nickname";
-    sqlP = {nickname: nickname};
-
-    result = await db.qry(sql, sqlP)
-
-    // sql err
-    if (!result['success']) {
-        console.error(result)
-        return jresp.sqlError();
-    }
-
-    if (result['rows'].length < 1) {
-        return jresp.sqlError();
-    }
-
-    if (result["rows"][0]["cnt"] < 1) {
-        return jresp.successData();
-    }
-
-    return jresp.duplicateData();
-}
-
-async function checkDuplicatePhone(phone) {
-
-    let sql;
-    let sqlP;
-    let result;
-
-    sql = "select count(*) as cnt " +
-        "from `user` " +
-        "where phone = :phone";
-    sqlP = {phone: phone};
-
-    result = await db.qry(sql, sqlP)
-
-    // sql err
-    if (!result['success']) {
-        console.error(result)
-        return jresp.sqlError();
-    }
-
-    if (result['rows'].length < 1) {
-        return jresp.sqlError();
-    }
-
-    if (result["rows"][0]["cnt"] < 1) {
-        return jresp.successData();
-    }
-
-    return jresp.duplicateData();
-}
 
 
 module.exports = router

@@ -1,6 +1,7 @@
+
 let jsonResponse = {};
 
-jsonResponse.successData = (_data,_length, _total, re_total) => {
+jsonResponse.successData = (_data, _length, _total, re_total) => {
 
     let result = {};
 
@@ -13,11 +14,11 @@ jsonResponse.successData = (_data,_length, _total, re_total) => {
     result.code = 1000;
     result.message = "success";
     result.data = _data ? _data : null;
-    result.length = _length === 0 || _length ? _length : _data ? Array(_data).length : 0 ;
-    result.total = _total === 0 || _total ? _total : _data ? Array(_data).length : 0 ;
+    result.length = _length === 0 || _length ? _length : _data ? Array(_data).length : 0;
+    result.total = _total === 0 || _total ? _total : _data ? Array(_data).length : 0;
 
     if (re_total)
-        result.re_total = re_total === 0 || re_total ? re_total : _data ? Array(_data).length : 0 ;
+        result.re_total = re_total === 0 || re_total ? re_total : _data ? Array(_data).length : 0;
 
     return result;
 }
@@ -120,7 +121,7 @@ jsonResponse.sqlError = (msg) => {
 
     result.success = false;
     result.code = 1009;
-    result.message = msg ? msg :"invalid data";
+    result.message = msg ? msg : "invalid data";
 
     return result;
 }

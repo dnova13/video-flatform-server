@@ -16,8 +16,6 @@ router.get("/member/list", async (req, res) => {
 
     let suspendChk = -1; // -1 : 전체, 0: 정지 안된 놈, 1: 정지 된 놈.
 
-    // console.log(isCreator);
-
     if (!_util.hasKey(req.query, "keyword")) {
         console.log("not keyword")
         return res.json(jresp.invalidData());
@@ -58,7 +56,7 @@ router.get("/member/detail/user", async (req, res) => {
 
 
 /* 크레이터 정보 */
-router.get("/member/detail/creatorApply", async (req, res) => {
+router.get("/member/detail/creator-apply", async (req, res) => {
 
     let uid = req.query.user_id;
 
@@ -87,21 +85,19 @@ router.get("/member/detail/point/quantity", async (req, res) => {
     let item = await pointSv.getTotalPointsByUserId(uid);
 
     if (!item) {
-        return  res.json(jresp.sqlError())
+        return res.json(jresp.sqlError())
     }
 
     let totalSponsor = await pointSv.getTotalSponsorPointsByUserId(uid);
     let totalAdjustment = await pointSv.getTotalCompleteAdjustmentByUserId(uid);
 
-    console.log("spon" , totalSponsor ,  "adj", totalAdjustment)
-
     if (totalAdjustment < 0 || totalSponsor < 0) {
-        return  res.json(jresp.sqlError())
+        return res.json(jresp.sqlError())
     }
 
     let data = {
-        total_points : item.total_points,
-        total_using : totalSponsor + totalAdjustment
+        total_points: item.total_points,
+        total_using: totalSponsor + totalAdjustment
     }
 
     return res.json(jresp.successData(data))
@@ -192,7 +188,7 @@ router.get("/member/detail/sponsored/list", async (req, res) => {
 
 
 /* 업로드한 영상 조회 */
-router.get("/member/detail/upload/list", async (req,res) => {
+router.get("/member/detail/upload/list", async (req, res) => {
 
     let limit = req.query.limit;
     let offset = req.query.offset;
@@ -208,7 +204,7 @@ router.get("/member/detail/upload/list", async (req,res) => {
 })
 
 /* 작성 댓글 조회 */
-router.get("/member/detail/reply/list", async (req,res) => {
+router.get("/member/detail/reply/list", async (req, res) => {
 
     let limit = req.query.limit;
     let offset = req.query.offset;
@@ -233,8 +229,6 @@ router.get("/suspend/list", async (req, res) => {
     let isCreator = req.query.is_creator;
 
     let suspendChk = 1; // -1 : 전체, 0: 정지 안된 놈, 1: 정지 된 놈.
-
-    console.log(isCreator);
 
     if (!_util.hasKey(req.query, "keyword")) {
         console.log("not keyword")
@@ -264,8 +258,6 @@ router.post("/:type/suspend/member", async (req, res) => {
     let uid = req.body.user_id;
     let chk = req.params.type
     let result;
-
-    console.log(chk);
 
     if (!_util.isBeyondZero(uid)) {
         return res.json(jresp.invalidData());
@@ -301,8 +293,6 @@ router.get("/retire/list", async (req, res) => {
     let offset = req.query.offset;
     let category = req.query.category ? req.query.category : 0;
 
-    console.log(category)
-
     if (!_util.areBeyondZero(limit, offset)) {
         return res.json(jresp.invalidData());
     }
@@ -332,8 +322,6 @@ router.get("/creator/apply/list", async (req, res) => {
     let offset = req.query.offset;
     let keyword = req.query.keyword;
 
-    console.log(keyword);
-
     if (!_util.hasKey(req.query, "keyword")) {
         console.log("not keyword")
         return res.json(jresp.invalidData());
@@ -353,7 +341,7 @@ router.get("/creator/apply/list", async (req, res) => {
         return res.json(jresp.invalidData());
     }
 
-    let result = await creatorSv.searchAppliedInfoList(status,limit, offset, keyword);
+    let result = await creatorSv.searchAppliedInfoList(status, limit, offset, keyword);
 
     return res.json(result);
 });
@@ -377,8 +365,6 @@ router.post("/creator/apply/:auth", async (req, res) => {
     let id = req.body.id;
     let auth = req.params.auth
     let result;
-
-    console.log(id);
 
     if (!_util.areBeyondZero(id)) {
         return res.json(jresp.invalidData());

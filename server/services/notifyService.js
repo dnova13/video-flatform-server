@@ -24,9 +24,6 @@ const sendPush = (type, title, body, token) => {
     data.title = title;
     data.body = type === 7 ? setMessage(7, body.relation_name) : setMessage(type, body.target_name)
 
-    // console.log("fcm #################### \n");
-    // console.log(_fcm.send(token, data));
-
 }
 
 const sendMultiPush = (type, title, body, tokens) => {
@@ -35,9 +32,6 @@ const sendMultiPush = (type, title, body, tokens) => {
 
     data.title = title;
     data.body = setMessage(type, body.target_name)
-
-    // console.log("multi fcm #################### \n");
-    // console.log(_fcm.sendMulti(tokens, data));
 }
 
 
@@ -71,7 +65,6 @@ const chkDuplicateInsert = async (type, body) => {
     }
 
     let result = await db.qry(sql, sqlParams)
-
     let chk = _util.selectChkFromDB(result)
 
     return chk < 1 ? chk : result["rows"][0]["id"];
@@ -152,7 +145,6 @@ notifyService.getUserDataForPostPush = async (userId, videoPostId) => {
                 where a.id = ${videoPostId}`
 
     let result = await db.qry(sql);
-
     let chk = _util.selectChkFromDB(result);
 
     if (chk < 1)
@@ -259,8 +251,6 @@ notifyService.getFcmToken = async (uid) => {
 
     let result = await db.qry(sql);
 
-    // console.log(result);
-
     if (_util.selectChkFromDB(result) < 1) {
         return ""
     }
@@ -316,10 +306,8 @@ notifyService.getNotifyListByUserId = async (uid, limit, offset, condition) => {
 
     let sql = head + where + order;
 
-    // console.log(sql);
 
     let result = await db.qry(sql);
-
     let chk = _util.selectChkFromDB(result);
 
     if (chk < 0) {
@@ -383,7 +371,6 @@ notifyService.getTotalNotifyByUserId = async (uid, condition) => {
     }
 
     let result = await db.qry(sql2 + where);
-
     let chk = _util.selectChkFromDB(result);
 
     if (chk < 1) {
@@ -400,7 +387,6 @@ notifyService.getTotalNotifyByUserId = async (uid, condition) => {
 notifyService.notifyPostEvent = async (userId, postId) => {
 
     let type = 1;
-
     let item = await notifyService.getUserDataForPostPush(userId, postId);
 
     if (!item) {
@@ -448,10 +434,6 @@ notifyService.notifyReply = async (userId, postId) => {
     let body = notifyService.setNotifyData(userId, item.nickname, item.posted_user_id, postId, item.title);
     let result = await notifyService.insert(type, body);
 
-    console.log("body #################### \n ", body);
-    console.log("reslut #################### \n", result);
-    console.log("item #################### \n", item);
-
     if (result < 1) {
         return jresp.sqlError();
     }
@@ -487,10 +469,6 @@ notifyService.notifyReReply = async (userId, targetId, replyId) => {
     let body = notifyService.setNotifyData(userId, item.nickname, targetId, replyId, null);
     let result = await notifyService.insert(type, body);
 
-    console.log("body ", body);
-    console.log("reslut ", result);
-    console.log("item ", item);
-
     if (result < 1) {
         return jresp.sqlError();
     }
@@ -519,10 +497,6 @@ notifyService.notifyFollow = async (userId, targetId) => {
     let body = notifyService.setNotifyData(userId, item.nickname, targetId, null, null);
     let result = await notifyService.insertNotifyLikeOrFollow(type, body);
 
-    console.log("body ", body);
-    console.log("reslut ", result);
-    console.log("item ", item);
-
     if (result < 1) {
         return jresp.sqlError();
     }
@@ -540,19 +514,13 @@ notifyService.notifyFollow = async (userId, targetId) => {
 notifyService.notifyUploadVideoPost = async (userId, postId, postTitle) => {
 
     let type = 5;
-
-    console.log(userId, postId, postTitle);
-
     let userNick = await notifyService.getUserNickname(userId);
-
-    console.log(userNick);
 
     if (!userNick) {
         return jresp.sqlError();
     }
 
     let fcmTokens = await notifyService.getFollowingFcmTokens(userId);
-    console.log(fcmTokens);
 
     let sql = `INSERT INTO notify_history (\`type\`, target_id, target_name, user_id, relation_id, relation_name) 
                 select 5, :target_id, :target_name, user_id , :relation_id, :relation_name
@@ -586,7 +554,6 @@ notifyService.notifyAdjustment = async (userId) => {
 
     let type = 6;
     let token = await notifyService.getFcmToken(userId);
-
     let body = notifyService.setNotifyData(null, null, userId, null, null);
 
     let result = await notifyService.insert(type, body);
@@ -621,10 +588,6 @@ notifyService.notifySponsorVideo = async (userId, postId) => {
     let body = notifyService.setNotifyData(userId, item.nickname, item.posted_user_id, postId, item.title);
     let result = await notifyService.insert(type, body);
 
-    console.log("body ", body);
-    console.log("reslut ", result);
-    console.log("item ", item);
-
     if (result < 1) {
         return jresp.sqlError();
     }
@@ -643,7 +606,6 @@ notifyService.notifySponsorVideo = async (userId, postId) => {
 notifyService.notifySponsorCreator = async (userId, targetId) => {
 
     let type = 8;
-
     let item = await notifyService.getUserDataForCommonPush(userId, targetId);
 
     if (!item) {
@@ -654,9 +616,9 @@ notifyService.notifySponsorCreator = async (userId, targetId) => {
     let body = notifyService.setNotifyData(userId, item.nickname, targetId, null, null);
     let result = await notifyService.insert(type, body);
 
-    console.log("body ", body);
-    console.log("reslut ", result);
-    console.log("item ", item);
+    // console.log("body ", body);
+    // console.log("reslut ", result);
+    // console.log("item ", item);
 
     if (result < 1) {
         return jresp.sqlError();

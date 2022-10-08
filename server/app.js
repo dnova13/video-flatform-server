@@ -100,6 +100,10 @@ async function main() {
     app.use('/', express.static(__dirname + '/../build'))
     // console.log('static dir ' + __dirname + '/../build')
 
+    app.get("/", (req, res) => {
+        return res.status(200).send();
+    });
+
     app.get("/postcode", (req, res) => {
 
         res.sendFile(__base + "/views/postcode.html");

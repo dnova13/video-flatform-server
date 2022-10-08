@@ -8,13 +8,11 @@ router.post("/suggest", async (req, res) => {
     let body = req.body;
     body.user_id = req.uinfo["u"];
 
-    if (!_util.hasKeys(body, "title", "content" )) {
-        // console.log("not key");
+    if (!_util.hasKeys(body, "title", "content")) {
         return res.json(jresp.invalidData());
     }
 
-    if (_util.isBlanks(body.title, body.content )) {
-        // console.log("blank");
+    if (_util.isBlanks(body.title, body.content)) {
         return res.send(jresp.invalidData());
     }
 

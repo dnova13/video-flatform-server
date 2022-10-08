@@ -90,7 +90,6 @@ async function getTotalVideoSearchForAdmin(searchQry, otherCondition) {
     let sql = head + searchQry + otherCondition;
 
     let result = await db.qry(sql);
-    // console.log(result);
 
     if (!result['success'] || result['rows'].length < 1) {
         return 0;
@@ -144,9 +143,8 @@ videoService.readVideoDetail = async (id) => {
         return jresp.sqlError();
     }
 
-
     item.blind_chk = item.blind_chk > 0;
-    item.tags = item.tags? JSON.parse(item.tags) : [];
+    item.tags = item.tags ? JSON.parse(item.tags) : [];
     item.thumbnail = _util.createImgDownPath(item.thumbnail);
     item.video = _util.createVideoDownPath(item.video);
     item.icon = _util.createImgDownPath(item.icon);
@@ -169,7 +167,7 @@ const updateVideoBlindChk = async (id, chk) => {
         return jresp.sqlError()
     }
 
-    return jresp.successData({chk: chk});
+    return jresp.successData({ chk: chk });
 }
 
 
@@ -215,7 +213,6 @@ videoService.insertCuration = async (body) => {
         parent_id: lastInsId
     }
 
-    // console.log(sql2);
 
     result = await db.qry(sql2, sqlParams2)
 
@@ -272,8 +269,6 @@ const updateVideoFromCuration = async (parentId, title, insVideos) => {
 
     let result = await db.qry(sql);
 
-    // console.log(sql);
-
     if (!_util.insertChkFromDB(result)) {
         return jresp.sqlError();
     }
@@ -288,8 +283,6 @@ const deleteVideoFromCuration = async (parentId, delVideos) => {
                 and video_post_id in (${delVideos.toString()}) `
 
     let result = await db.qry(sql);
-
-    console.log(sql);
 
     if (!_util.updateChkFromDB(result)) {
         console.log("del err");
@@ -332,15 +325,13 @@ videoService.insertPick = async (body) => {
         parent_id: lastInsId
     }
 
-    console.log(sql2);
-
     result = await db.qry(sql2, sqlParams2)
 
     if (!_util.insertChkFromDB(result)) {
         return jresp.sqlError()
     }
 
-    return jresp.successData({id : lastInsId});
+    return jresp.successData({ id: lastInsId });
 }
 
 
@@ -412,8 +403,6 @@ const updateVideoFromPick = async (parentId, title, insVideos, fid) => {
 
     let result = await db.qry(sql);
 
-    // console.log(sql);
-
     if (!_util.insertChkFromDB(result)) {
         return jresp.sqlError();
     }
@@ -429,8 +418,6 @@ const deleteVideoFromPick = async (parentId, delVideos) => {
 
     let result = await db.qry(sql);
 
-    console.log(sql);
-
     if (!_util.updateChkFromDB(result)) {
         console.log("del err");
         return jresp.sqlError();
@@ -438,7 +425,6 @@ const deleteVideoFromPick = async (parentId, delVideos) => {
 
     return jresp.successData();
 }
-
 
 
 

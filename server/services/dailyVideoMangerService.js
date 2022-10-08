@@ -8,8 +8,6 @@ dailyVideoMangerService.isDailyChk = async (videoPostId) => {
         `    where video_post_id = ${videoPostId} ` +
         "    and daily_date = current_date() "
 
-    console.log(videoPostId);
-
     let result = await db.qry(sql);
 
     if (!result['success'] || result['rows'].length < 1) {
@@ -20,17 +18,15 @@ dailyVideoMangerService.isDailyChk = async (videoPostId) => {
 }
 
 dailyVideoMangerService.dailyChkVideo = async (type, videoPostId, score) => {
-// async function dailyChkVideo(type, videoPostId) {
 
     console.log("daily !@!@");
 
     let res;
     let result = await dailyVideoMangerService.isDailyChk(videoPostId);
-    console.log("daily ", result);
 
     switch (result) {
 
-        case 0 :
+        case 0:
 
             let sql = `INSERT INTO daily_video_manager (${type}_cnt, video_post_id, daily_date)
                         VALUES(1, ${videoPostId}, current_date())`
@@ -49,14 +45,14 @@ dailyVideoMangerService.dailyChkVideo = async (type, videoPostId, score) => {
             res = result['rows']['insertId'];
             break;
 
-        case 1 :
-            let sql2 =  `update daily_video_manager 
+        case 1:
+            let sql2 = `update daily_video_manager 
                         set ${type}_cnt = ${type}_cnt + 1 
                         where video_post_id = ${videoPostId}
                         and daily_date = current_date() `
 
             if (type === "score") {
-                sql2 =  `update daily_video_manager 
+                sql2 = `update daily_video_manager 
                         set ${type}_cnt = ${type}_cnt + 1
                             , score_sum = score_sum + ${score}  
                         where video_post_id = ${videoPostId}
@@ -73,19 +69,16 @@ dailyVideoMangerService.dailyChkVideo = async (type, videoPostId, score) => {
             break;
     }
 
-    console.log(res);
     return res;
 }
 dailyVideoMangerService.dailyUnChkVideo = async (type, videoPostId) => {
-// async function dailyUnChkVideo(type, videoPostId) {
 
     let res;
     let result = await dailyVideoMangerService.isDailyChk(videoPostId);
-    console.log(result);
 
     switch (result) {
 
-        case 0 :
+        case 0:
             let sql = `INSERT INTO daily_video_manager (${type}_cnt, video_post_id, daily_date)
                         VALUES(0, ${videoPostId}, current_date())`
 
@@ -98,8 +91,8 @@ dailyVideoMangerService.dailyUnChkVideo = async (type, videoPostId) => {
             res = result['rows']['insertId'];
             break;
 
-        case 1 :
-            let sql2 =  `update daily_video_manager 
+        case 1:
+            let sql2 = `update daily_video_manager 
                         set ${type}_cnt = if(${type}_cnt - 1 < 0, 0, ${type}_cnt - 1) 
                         where video_post_id = ${videoPostId}
                         and daily_date = current_date() `
@@ -113,8 +106,6 @@ dailyVideoMangerService.dailyUnChkVideo = async (type, videoPostId) => {
             res = result['rows']['affectedRows'];
             break;
     }
-
-    console.log(res)
 
     return res;
 }

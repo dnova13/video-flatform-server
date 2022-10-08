@@ -26,7 +26,7 @@ router.get("/list", async (req, res) => {
 });
 
 
-router.get("/list/noBlind", async (req, res) => {
+router.get("/list/no-blind", async (req, res) => {
 
     let keyword = req.query.keyword;
     let limit = req.query.limit;

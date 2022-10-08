@@ -10,7 +10,7 @@ creatorService.isCreator = async (uid) => {
                 where a.user_id = b.user_id
                 and a.user_id = :user_id
                 and b.status = 1`
-    let sqlP = {user_id:uid}
+    let sqlP = { user_id: uid }
 
     let result = await db.qry(sql, sqlP)
 
@@ -20,7 +20,7 @@ creatorService.isCreator = async (uid) => {
         return jresp.sqlError();
     }
 
-    return jresp.successData({is_creator : result["rows"][0]["cnt"] > 0});
+    return jresp.successData({ is_creator: result["rows"][0]["cnt"] > 0 });
 }
 
 creatorService.applyCreator = async (body) => {
@@ -29,17 +29,16 @@ creatorService.applyCreator = async (body) => {
                 VALUES(:name, :intro, :sns, :account, :piece, :activity_region, :user_id)`
 
     let sqlParams = {
-        name : body.name,
-        intro : body.intro,
-        sns : body.sns,
-        account : body.account,
-        piece : body.piece,
-        activity_region : body.activity_region,
-        user_id : body.user_id,
+        name: body.name,
+        intro: body.intro,
+        sns: body.sns,
+        account: body.account,
+        piece: body.piece,
+        activity_region: body.activity_region,
+        user_id: body.user_id,
     }
 
     let result = await db.qry(sql, sqlParams);
-    console.log(result)
 
     if (!_util.insertChkFromDB(result)) {
         console.log("fail apply ")
@@ -67,7 +66,7 @@ creatorService.applyCreator = async (body) => {
         }
     }
 
-    return jresp.successData({id : insId});
+    return jresp.successData({ id: insId });
 }
 
 
@@ -96,11 +95,10 @@ creatorService.uploadVideos = async (body) => {
         values += ` (${video.fid}, ${id}, 'apply_video', 1, '${JSON.stringify(obj)}'), `
     }
 
-    values = values.slice(0,-2);
+    values = values.slice(0, -2);
 
     let sql = util.format(`INSERT INTO files_meta (file_id, parent, file_key, idx, value) 
                                 values %s`, values);
-    console.log(sql);
 
     let result = await db.qry(sql);
 
@@ -124,15 +122,13 @@ creatorService.chkDuplicateApply = async (uid) => {
 
     let chk = _util.duplicateSelectChkFromDB(result);
 
-    if (chk < 0)  {
+    if (chk < 0) {
         return jresp.sqlError()
     }
 
-    console.log(result);
-
     let item = {
-        id : result["rows"][0]["id"],
-        phase : result["rows"][0]["cnt"] < 1 ? 0 : result["rows"][0]["video_cnt"] < 1 ? 1 : 2
+        id: result["rows"][0]["id"],
+        phase: result["rows"][0]["cnt"] < 1 ? 0 : result["rows"][0]["video_cnt"] < 1 ? 1 : 2
     }
 
     return jresp.successData(item);
@@ -148,9 +144,7 @@ creatorService.getAppliedInfoByUserId = async (uid) => {
     let applyInfo = await db.qry(sql);
     let chk = _util.selectChkFromDB(applyInfo);
 
-    console.log("applyInfo",applyInfo);
-
-    if (chk < 0)  {
+    if (chk < 0) {
         return jresp.sqlError()
     }
 
@@ -168,9 +162,7 @@ creatorService.getAppliedInfoByUserId = async (uid) => {
     let files = await db.qry(sql2);
     chk = _util.selectChkFromDB(files);
 
-    // console.log("files",files);
-
-    if (chk < 0)  {
+    if (chk < 0) {
         return jresp.sqlError()
     }
 
@@ -199,7 +191,7 @@ creatorService.getAppliedInfoByUserId = async (uid) => {
         }
     }
 
-    return jresp.successData(item,1,1);
+    return jresp.successData(item, 1, 1);
 }
 
 creatorService.searchAppliedInfoList = async (status, limit, offset, keyword) => {
@@ -210,7 +202,7 @@ creatorService.searchAppliedInfoList = async (status, limit, offset, keyword) =>
         condition = ` and status = ${status} `
     }
 
-    let searchQry = _util.createConditionQryForSearch( 'concat(a.name, " ",b.nickname)',"and", keyword, "where");
+    let searchQry = _util.createConditionQryForSearch('concat(a.name, " ",b.nickname)', "and", keyword, "where");
 
     let sql = `select a.id, a.intro, a.sns, a.account, a.piece
                         , a.name, b.nickname
@@ -240,16 +232,14 @@ creatorService.searchAppliedInfoList = async (status, limit, offset, keyword) =>
                 limit ${limit} offset ${offset - 1} `
 
     let result = await db.qry(sql);
-    // console.log(sql);
-    console.log(result);
 
     let chk = _util.selectChkFromDB(result);
 
-    if (chk < 0)  {
+    if (chk < 0) {
         return jresp.sqlError()
     }
 
-    if (chk === 0)  {
+    if (chk === 0) {
         return jresp.emptyData()
     }
 
@@ -296,9 +286,9 @@ creatorService.getAppliedInfoByApplyId = async (id) => {
     let applyInfo = await db.qry(sql);
     let chk = _util.selectChkFromDB(applyInfo);
 
-    console.log("applyInfo",applyInfo);
+    console.log("applyInfo", applyInfo);
 
-    if (chk < 0)  {
+    if (chk < 0) {
         return jresp.sqlError()
     }
 
@@ -316,9 +306,7 @@ creatorService.getAppliedInfoByApplyId = async (id) => {
     let files = await db.qry(sql2);
     chk = _util.selectChkFromDB(files);
 
-    // console.log("files",files);
-
-    if (chk < 0)  {
+    if (chk < 0) {
         return jresp.sqlError()
     }
 
@@ -335,18 +323,11 @@ creatorService.getAppliedInfoByApplyId = async (id) => {
         if (file.file_key === "apply_video") {
 
             let video = {};
-            
-            console.log(file.value);
-            console.log(JSON.stringify(file.value));
 
             let str = file.value;
-            console.log(str);
-
-            str = str.replace(/\n/gi,"\\n").replace(/\r/gi,"\\r")
+            str = str.replace(/\n/gi, "\\n").replace(/\r/gi, "\\r")
 
             video = JSON.parse(str);
-            console.log(video);
-
             video.video = _util.createVideoDownPath(file.uuid);
 
             item.videos.push(video);
@@ -359,18 +340,11 @@ creatorService.getAppliedInfoByApplyId = async (id) => {
 
     item.copyright = item.videos.length < 1 ? false : item.copyright > 0;
 
-    return jresp.successData(item,1,1);
+    return jresp.successData(item, 1, 1);
 }
 
-// todo: 추후 예정?
-creatorService.modifyCreatorApplyByUserId = async (body) => {
 
-
-
-};
-
-
-creatorService.getUploadedListByUserId = async (uid, limit, offset ) => {
+creatorService.getUploadedListByUserId = async (uid, limit, offset) => {
 
     let sql = `select a.id, title, thumbnail
                         , a.user_id
@@ -389,16 +363,15 @@ creatorService.getUploadedListByUserId = async (uid, limit, offset ) => {
 
     let chk = _util.selectChkFromDB(result);
 
-    if (chk < 0)  {
+    if (chk < 0) {
         return jresp.sqlError()
     }
 
-    if (chk === 0)  {
+    if (chk === 0) {
         return jresp.emptyData()
     }
 
     let list = result["rows"];
-
     let sql2 = `select count(*) as total
                 from video_post a
                 where a.user_id = ${uid}`
@@ -450,13 +423,11 @@ const updateAuth = async (id, status) => {
     }
 
     let sqlP = {
-        id:id,
-        status:status
+        id: id,
+        status: status
     }
 
     let result = await db.qry(sql, sqlP);
-
-    console.log(result)
 
     if (!_util.updateChkFromDB(result)) {
         return jresp.sqlError();
@@ -491,8 +462,6 @@ const insertCreator = async (id) => {
 
     result = await db.qry(sql);
 
-    console.log(result);
-
     if (!_util.updateChkFromDB(result)) {
         return jresp.sqlError()
     }
@@ -504,8 +473,6 @@ creatorService.doAuthCreator = async (id) => {
 
     let result = await insertCreator(id);
 
-    // console.log(result);
-
     if (!result["success"]) {
         console.log("ins err");
         return jresp.sqlError();
@@ -516,11 +483,11 @@ creatorService.doAuthCreator = async (id) => {
 
 
 creatorService.rejectAuthCreator = async (id) => {
-    return await updateAuth(id,2)
+    return await updateAuth(id, 2)
 };
 
 creatorService.pendingAuthCreator = async (id) => {
-    return await updateAuth(id,0)
+    return await updateAuth(id, 0)
 };
 
 

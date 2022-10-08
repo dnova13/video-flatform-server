@@ -26,8 +26,6 @@ router.post('/upload/image', (req, res) => {
     try {
         imgUpload(req, res, async (err) => { // params : images
 
-            // console.log(__upload_dir);
-
             if (err instanceof multer.MulterError) {
 
                 return res.send(jresp.uploadError(err.message))
@@ -47,7 +45,6 @@ router.post('/upload/image', (req, res) => {
                 return res.json(jresp.uploadError())
             }
 
-            // TODO insert file table
             for (let file of files) {
 
                 let body = {};
@@ -108,7 +105,6 @@ router.post('/upload/files', (req, res) => {
                 return res.json(jresp.uploadError())
             }
 
-            // TODO insert file table
             for (let file of files) {
 
                 let body = {};
@@ -203,8 +199,6 @@ router.post('/upload/video', (req, res) => {
                     body.duration = parseInt(metadata.format.duration);
                     body.path = file.destination.replaceAll(__upload_video_dir, "") + "/" + file.filename;
 
-                    console.log(body)
-
                     result = await insertFile(body, 1)
 
                     if (result < 1) {
@@ -239,8 +233,6 @@ router.post('/upload/s3/video', (req, res) => {
             let file = req.file;
             let result;
 
-            console.log(file)
-
             if (!file) {
                 return res.send(jresp.uploadError())
             }
@@ -267,7 +259,6 @@ router.post('/upload/s3/video', (req, res) => {
                 console.log("###########", is_err)
                 if (is_err) return res.send(jresp.uploadError("not upload at s3"));
 
-                console.log("##################")
                 let body = {};
 
                 body.name = file.originalname;
@@ -283,12 +274,10 @@ router.post('/upload/s3/video', (req, res) => {
                         return res.send(jresp.uploadError());
                     }
 
-                    // console.dir(metadata);
 
                     body.duration = parseInt(metadata.format.duration);
                     body.path = file.destination.replaceAll(__upload_video_dir, "") + "/" + file.filename;
 
-                    // console.log("S3",body)
                     result = await insertFile(body, 1)
 
                     if (result < 1) {
@@ -331,7 +320,7 @@ async function uploadHlsToS3(_file) {
                 Bucket: process.env.AWS_BUCKET + "/hls",
                 Key: `${_file.uuid}/${f}`,
                 Body: fileContent,
-                ACL:'public-read'
+                ACL: 'public-read'
             };
 
             bucket.putObject(params, async function (err, data) {
@@ -458,7 +447,6 @@ router.get('/video/:uuid', async (req, res) => {
     }
 
     // res.sendredirect(result['rows'][0]["path"]);
-    console.log(result['rows'][0]["path"]);
 
     res.redirect(__host + result['rows'][0]["path"]);
 });
@@ -493,7 +481,6 @@ router.get('/download/:uuid', async (req, res) => {
     }
 
     // res.sendredirect(result['rows'][0]["path"]);
-    console.log(result['rows'][0]);
 
     let _stream = fs.createReadStream(util.format('%s%s', __upload_dir, result['rows'][0]['path']))
     let fileName = encodeURIComponent(result['rows'][0]['name']);

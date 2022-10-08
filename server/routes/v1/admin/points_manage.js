@@ -7,7 +7,7 @@ const notifySv = require("../../../services/notifyService")
 
 /* 포인트 내역*/
 // 포인트 충전 내역 조회 및 검색
-router.get("/charge/list", async (req,res) => {
+router.get("/charge/list", async (req, res) => {
 
     let limit = req.query.limit;
     let offset = req.query.offset;
@@ -28,7 +28,7 @@ router.get("/charge/list", async (req,res) => {
 });
 
 // 포인트 충전 내역 조회 및 검색
-router.get("/charge/read", async (req,res) => {
+router.get("/charge/read", async (req, res) => {
 
     let id = req.query.id;
 
@@ -72,7 +72,7 @@ router.get("/sponsor/ed/lots/user", async (req, res) => {
 });
 
 /// 후원한 내역 조회 및 검색.
-router.get("/sponsor/list", async (req,res) => {
+router.get("/sponsor/list", async (req, res) => {
 
     let limit = req.query.limit;
     let offset = req.query.offset;
@@ -169,8 +169,6 @@ router.get("/adjustment/all/list", async (req, res) => {
         return res.json(jresp.invalidData());
     }
 
-    // console.log(status);
-
     let result = await pointSv.searchAdjustmentAllHistory(status, limit, offset, keyword);
 
     return res.json(result);
@@ -203,7 +201,6 @@ router.post("/adjustment/complete", async (req, res) => {
     }
 
     if (Number(type) < 0 || Number(type) > 1) {
-        // console.log("not condtion")
         return res.json(jresp.invalidData());
     }
 

@@ -10,11 +10,10 @@ router.post("", async (req, res) => {
     let result;
 
     body.user_id = req.uinfo["u"];
-    let keys = ["name","intro", "sns", "piece", "activity_region", "fids"]
+    let keys = ["name", "intro", "sns", "piece", "activity_region", "fids"]
 
     if (!_util.hasKeysArray(body, keys)) {
 
-        // console.log("key err");
         return res.json(jresp.invalidData());
     }
 
@@ -57,17 +56,14 @@ router.post("/upload/videos", async (req, res) => {
     console.log(body);
 
     if (!_util.isBeyondZero(body.id)) {
-        console.log("invalid num");
         return res.json(jresp.invalidData());
     }
 
     if (!(Array.isArray(body.videos) && body.videos.length === 3)) {
-        console.log("invalid arr");
         return res.json(jresp.invalidData());
     }
 
     result = await creatorSv.uploadVideos(body);
-
     return res.json(result);
 });
 
@@ -81,16 +77,6 @@ router.get("/read", async (req, res) => {
 
 });
 
-
-// TODO : 추후 예정?
-router.get("/modify", async (req, res) => {
-
-    console.log("modify");
-
-    let result = "";
-
-    return res.json(result);
-});
 
 
 module.exports = router;

@@ -65,15 +65,13 @@ router.get("/video", async (req, res) => {
                 on a.user_id = b.id 
                 `  ;
 
-    let searchQry = _util.createConditionQryForSearch( `concat(a.title," ",b.nickname," ",a.tags )`,"and", keyword);
+    let searchQry = _util.createConditionQryForSearch(`concat(a.title," ",b.nickname," ",a.tags )`, "and", keyword);
     let otherCondition = ` and a.blind_chk = 0 `
-    let tail = ` limit ${limit} offset ${offset - 1} ` ;
+    let tail = ` limit ${limit} offset ${offset - 1} `;
 
     let sql = head + searchQry + otherCondition + orderBy + tail;
-    // console.log(sql);
 
     let result = await db.qry(sql);
-    // console.log(result);
 
     if (!result['success']) {
         return res.json(jresp.sqlError());
@@ -85,7 +83,7 @@ router.get("/video", async (req, res) => {
 
     let data = result["rows"];
 
-    for (let item of data ) {
+    for (let item of data) {
         item.thumbnail = _util.createImgDownPath(item.thumbnail)
         item.icon = _util.createImgDownPath(item.icon)
     }
@@ -112,22 +110,19 @@ router.get("/creator", async (req, res) => {
         return res.json(jresp.invalidData());
     }
 
-    let searchQry = _util.createConditionQryForSearch( "b.nickname","and", keyword);
+    let searchQry = _util.createConditionQryForSearch("b.nickname", "and", keyword);
 
     let sql = "select b.id, b.nickname, b.icon  " +
-                "from creator a " +
-                "inner join `user` b " +
-                "on a.user_id = b.id " +
-                searchQry +
-                "order by nickname asc " +
-                `limit ${limit} offset ${offset-1}`
+        "from creator a " +
+        "inner join `user` b " +
+        "on a.user_id = b.id " +
+        searchQry +
+        "order by nickname asc " +
+        `limit ${limit} offset ${offset - 1}`
 
-    console.log(sql);
-
-    let sqlParams = {keyword: keyword};
+    let sqlParams = { keyword: keyword };
 
     let result = await db.qry(sql, sqlParams);
-    console.log(result);
 
     if (!result['success']) {
         return res.json(jresp.sqlError());
@@ -144,7 +139,6 @@ router.get("/creator", async (req, res) => {
     }
 
     let total = await getTotalCreator(searchQry);
-    console.log(total);
 
     return res.json(jresp.successData(data, data.length, total));
 });
@@ -197,29 +191,25 @@ router.get("/tags", async (req, res) => {
     }
 
     let head = "SELECT a.id, a.view_cnt   " +
-                    " , like_cnt    " +
-                    " , ifnull(ROUND(a.score_sum/a.score_cnt, 2), 0) as score   " +
-                    " , title    " +
-                    " , a.user_id     " +
-                    " , (select nickname from `user` where id = a.user_id ) as nickname   " +
-                    " , (select icon from `user` where id = a.user_id ) as icon    " +
-                    " , a.thumbnail   " +
-                    " , ifnull((select duration from files where `uuid` = a.video and file_type = 1 limit 1),0) as duration " +
-                    " , tags" +
-                    " , create_at , update_at " +
+        " , like_cnt    " +
+        " , ifnull(ROUND(a.score_sum/a.score_cnt, 2), 0) as score   " +
+        " , title    " +
+        " , a.user_id     " +
+        " , (select nickname from `user` where id = a.user_id ) as nickname   " +
+        " , (select icon from `user` where id = a.user_id ) as icon    " +
+        " , a.thumbnail   " +
+        " , ifnull((select duration from files where `uuid` = a.video and file_type = 1 limit 1),0) as duration " +
+        " , tags" +
+        " , create_at , update_at " +
         " from video_post a ";
 
-    let searchQry = _util.createConditionQryForSearch( "tags","and", keyword);
+    let searchQry = _util.createConditionQryForSearch("tags", "and", keyword);
     let otherCondition = ` and a.blind_chk = 0 `
 
-    let tail = ` limit ${limit} offset ${offset - 1} ` ;
-
+    let tail = ` limit ${limit} offset ${offset - 1} `;
     let sql = head + searchQry + otherCondition + orderBy + tail;
 
-    // console.log(sql);
-
     let result = await db.qry(sql)
-    // console.log(result);
 
     if (!result['success']) {
         return res.json(jresp.sqlError());
@@ -231,10 +221,10 @@ router.get("/tags", async (req, res) => {
 
     let data = result["rows"];
 
-    for (let item of data ) {
+    for (let item of data) {
         item.thumbnail = _util.createImgDownPath(item.thumbnail)
         item.icon = _util.createImgDownPath(item.icon)
-        item.tags = item.tags? JSON.parse(item.tags) : [];
+        item.tags = item.tags ? JSON.parse(item.tags) : [];
     }
 
     let total = await getTotalTagsSearch(searchQry);
@@ -242,15 +232,14 @@ router.get("/tags", async (req, res) => {
     return res.json(jresp.successData(data, data.length, total));
 });
 
-router.get("/recommend/words", async (req,res) => {
+router.get("/recommend/words", async (req, res) => {
 
     let sql = "select value as word " +
-                "from others_meta " +
-                "where `type` = 'recommend_word' " +
-                "order by value asc, create_at desc"
+        "from others_meta " +
+        "where `type` = 'recommend_word' " +
+        "order by value asc, create_at desc"
 
-    let result= await db.qry(sql);
-    console.log(result);
+    let result = await db.qry(sql);
 
     if (!result['success']) {
         return res.json(jresp.sqlError());
@@ -290,7 +279,7 @@ async function getTotalVideoSearch(searchQry) {
 async function getTotalTagsSearch(searchQry) {
 
     let head = "select count(*) as total " +
-                "from video_post "
+        "from video_post "
     let otherCondition = ` and blind_chk = 0 `
     let sql = head + searchQry + otherCondition;
 
@@ -308,10 +297,10 @@ async function getTotalTagsSearch(searchQry) {
 async function getTotalCreator(searchQry) {
 
     let head = "select count(*) as total " +
-                "from creator a " +
-                "inner join `user` b " +
-                "on a.user_id = b.id "
-    let sql = head + searchQry ;
+        "from creator a " +
+        "inner join `user` b " +
+        "on a.user_id = b.id "
+    let sql = head + searchQry;
 
     let result = await db.qry(sql);
     console.log(result);

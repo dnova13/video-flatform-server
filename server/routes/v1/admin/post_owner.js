@@ -32,8 +32,6 @@ router.post("/curation/register", async (req, res) => {
     /// update
     else {
 
-        // console.log(body)
-
         if (!_util.isBeyondZero(body.id)) {
             console.log("under zero");
             return res.json(jresp.invalidData())
@@ -90,8 +88,6 @@ router.post("/pick/register", async (req, res) => {
 
     /// update
     else {
-
-
         if (!_util.isBeyondZero(body.id)) {
             console.log("under zero");
             return res.json(jresp.invalidData())
@@ -119,8 +115,6 @@ router.post("/pick/delete", async (req, res) => {
 
     let body = req.body;
     let result
-
-    console.log(body)
 
     if (!_util.isBeyondZero(body.id)) {
         console.log("under zero");
@@ -150,7 +144,6 @@ router.get("/pick/list", async (req, res) => {
                 limit ${limit} offset ${offset - 1} 
                 `
     let result = await db.qry(sql);
-    console.log(result);
 
     if (!result['success']) {
         return res.json(jresp.sqlError());
@@ -208,7 +201,7 @@ router.get("/pick/:id", async (req, res) => {
         " , ifnull((select duration from files where `uuid` = b.video and file_type = 1  limit 1),0) as duration " +
         " , b.create_at, b.update_at " +
         "from ( " +
-            `select b.video_post_id, b.parent_id 
+        `select b.video_post_id, b.parent_id 
                                    , b.id
                                    , a.thumbnail, a.title
                             from video_manager a
@@ -222,7 +215,6 @@ router.get("/pick/:id", async (req, res) => {
         "order by a.id asc ";
 
     let result = await db.qry(sql);
-    console.log(result);
 
     if (!result['success']) {
         return res.json(jresp.sqlError());
@@ -316,8 +308,6 @@ router.get("/curation", async (req, res) => {
     for (let item of data) {
 
         if (i === 0) {
-
-            console.log(item);
 
             __data.id = item.parent_id;
             __data.title = item.curation_title;

@@ -5,7 +5,7 @@ const creatorSv = require("../../services/creatorService");
 const pointSv = require("../../services/pointService");
 
 
-router.get("/isCreator", async (req,res) => {
+router.get("/is-creator", async (req, res) => {
 
     let uid = req.uinfo["u"];
     let result = await creatorSv.isCreator(uid);
@@ -59,9 +59,6 @@ router.get("/sponsored/video", async (req, res) => {
 
     return res.json(result);
 });
-
-
-
 
 
 module.exports = router;

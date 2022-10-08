@@ -30,9 +30,6 @@ router.post("/set/push", async (req, res) => {
 
 router.post("/update/fcmtoken", async (req, res) => {
 
-    // console.log("DDDD");
-
-    // let uid = req.body.user_id;
     let uid = req.uinfo["u"];
     let token = req.body.token;
 
@@ -91,8 +88,6 @@ router.post("/retire", async (req, res) => {
     let reason = req.body.reason;
     let content = req.body.content ? req.body.content : "";
     let category = req.body.category_id;
-
-    // console.log(reason);
 
     if (_util.isBlank(reason)) {
         return res.json(jresp.invalidData());

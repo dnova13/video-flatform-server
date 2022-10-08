@@ -48,7 +48,6 @@ router.get("/recommend/list", async (req, res) => {
 });
 
 
-///
 router.post("/com/register", async (req, res) => {
 
     let body = req.body;
@@ -88,7 +87,7 @@ router.post("/com/register", async (req, res) => {
 });
 
 
-router.get("/com/list", async (req, res) => {
+router.get("/owner/list", async (req, res) => {
 
     let result = await tagSv.getComSearchTagList();
     return res.json(result);

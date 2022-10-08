@@ -6,15 +6,25 @@ const util = require('util')
 const pointSv = require("../../services/pointService")
 const notifySv = require("../../services/notifyService");
 
-
+// 최소 충전 금액
 const minChargePoints = 1 * Math.pow(10, 3);
+
+// 최대 충전 금액
 const maxChargePoints = 1 * Math.pow(10, 6);
+
+// 하루 최대 충전 가능 금액
 const dailyChargeMaxPoints = 1 * Math.pow(10, 6);
 
+// 최소 후원 금액
 const minSponsorPoints = 1 * Math.pow(10, 3);
+
+// 최대 우원 금액
 const maxSponsorPoints = 1 * Math.pow(10, 6);
+
+// 하루 최대 후원 가능 금액
 const dailySponsorMaxPoints = 1 * Math.pow(10, 6);
 
+// 최소 정산 가능 금액
 const minAdjustmentPoints = 5 * Math.pow(10, 3);
 
 router.post("/apply", async (req, res) => {
@@ -31,32 +41,26 @@ router.post("/apply", async (req, res) => {
     let result;
 
     if (!_util.hasKeys(body, "point_quantity")) {
-        // console.log("not key");
         return res.json(jresp.invalidData());
     }
 
     if (!_util.isBeyondZero(body.point_quantity)) {
-        // console.log("not num");
         return res.send(jresp.invalidData());
     }
 
     if (Number(body.point_quantity) < minChargePoints) {
-        // console.log("invalid price");
         return res.send(jresp.invalidData(msg, chargeLimit));
     }
 
     if (Number(body.point_quantity) > maxChargePoints) {
-        // console.log("invalid price");
         return res.send(jresp.invalidData(msg, chargeLimit));
     }
 
     let dailyCharged = await pointSv.getDailyChargePointsByUserId(uid);
     let possibleDailyCharge = dailyChargeMaxPoints - dailyCharged;
 
-    // console.log(possibleDailyCharge);
 
     if (Number(body.point_quantity) > possibleDailyCharge) {
-        // console.log("invalid price");
 
         let data = {
             "daily_charge_limit": dailyChargeMaxPoints,
@@ -80,12 +84,10 @@ router.post("/charge", async (req, res) => {
     let result;
 
     if (!_util.hasKeys(body, "merchant_uid", "imp_uid")) {
-        // console.log("not key");
         return res.json(jresp.invalidData());
     }
 
     if (_util.isBlanks(body.merchant_uid, body.imp_uid)) {
-        // console.log("blank");
         return res.send(jresp.invalidData());
     }
 
@@ -100,8 +102,6 @@ router.post("/charge", async (req, res) => {
         /// pg 접속 실패 2003
         return res.json(jresp.failInquiryDataFromPG());
     }
-
-    // console.log(pgOrder)
 
     /* db 정보 조회 */
     let dbOrder = await pointSv.getPointInfoByOrderNum(orderNum);
@@ -132,10 +132,10 @@ router.post("/charge", async (req, res) => {
                 // console.log("paid")
 
                 let data = {
-                    id : dbOrder.id,
-                    pg_id : impUid,
-                    user_id : dbOrder.user_id,
-                    points : pgOrder["amount"],
+                    id: dbOrder.id,
+                    pg_id: impUid,
+                    user_id: dbOrder.user_id,
+                    points: pgOrder["amount"],
                     card_name: pgOrder["card_name"],
                     card_number: pgOrder["card_number"]
                 }
@@ -151,14 +151,14 @@ router.post("/charge", async (req, res) => {
                 return res.json(jresp.successData());
 
             // 가상 계좌 발급.
-           /*case "ready":
-               break;
-
-            case "cancelled":
+            /*case "ready":
                 break;
-
-            case "failed":
-                break;*/
+ 
+             case "cancelled":
+                 break;
+ 
+             case "failed":
+                 break;*/
 
             default:
                 return res.json(jresp.invalidPaymentData());
@@ -177,8 +177,8 @@ router.post("/charge", async (req, res) => {
                 let chkSum = pgOrder["amount"];
 
                 let data = {
-                    "imp_uid" : pgOrder["imp_uid"],
-                    "merchant_uid" : pgOrder["merchant_uid"],
+                    "imp_uid": pgOrder["imp_uid"],
+                    "merchant_uid": pgOrder["merchant_uid"],
                     "amount": pgOrder["amount"], // 가맹점 클라이언트로부터 받은 환불금액
                     "checksum": chkSum, // 환불 가능 금액
                     "reason": reason,
@@ -221,8 +221,6 @@ router.post("/charge", async (req, res) => {
 router.post("/charge/webhook", async (req, res) => {
 
     let body = req.body;
-    // let uid = req.uinfo["u"];
-    // let result;
 
     if (!_util.hasKeys(body, "merchant_uid", "imp_uid")) {
         console.log("not key");
@@ -275,10 +273,10 @@ router.post("/charge/webhook", async (req, res) => {
                 console.log("paid")
 
                 let data = {
-                    id : dbOrder.id,
-                    pg_id : impUid,
-                    user_id : dbOrder.user_id,
-                    points : pgOrder["amount"],
+                    id: dbOrder.id,
+                    pg_id: impUid,
+                    user_id: dbOrder.user_id,
+                    points: pgOrder["amount"],
                     card_name: pgOrder["card_name"],
                     card_number: pgOrder["card_number"]
                 }
@@ -290,7 +288,7 @@ router.post("/charge/webhook", async (req, res) => {
                     return res.json(jresp.failPayment());
                 }
 
-                result= await pointSv.chargePoints(data);
+                result = await pointSv.chargePoints(data);
 
                 // 결제는 했지만 sql 에러로 상태값 변경 실패한거.
                 if (!result["success"]) {
@@ -326,8 +324,8 @@ router.post("/charge/webhook", async (req, res) => {
                 let chkSum = pgOrder["amount"];
 
                 let data = {
-                    "imp_uid" : pgOrder["imp_uid"],
-                    "merchant_uid" : pgOrder["merchant_uid"],
+                    "imp_uid": pgOrder["imp_uid"],
+                    "merchant_uid": pgOrder["merchant_uid"],
                     "amount": pgOrder["amount"], // 가맹점 클라이언트로부터 받은 환불금액
                     "checksum": chkSum, // 환불 가능 금액
                     "reason": reason,
@@ -680,7 +678,7 @@ router.post("/apply/charge/adjustment", async (req, res) => {
 
         let msg = `under ${_util.commaMoney(minAdjustmentPoints)} points`
 
-        return res.send(jresp.invalidData(msg, {min: minAdjustmentPoints}));
+        return res.send(jresp.invalidData(msg, { min: minAdjustmentPoints }));
     }
 
     if (Number(body.point_quantity) % 100 > 0) {
@@ -692,9 +690,9 @@ router.post("/apply/charge/adjustment", async (req, res) => {
     // let appliedTotal = await pointSv.getTotalAppliedAdjustmentByUserId(uid, 0);
     let appliedTotal = 0;
 
-    console.log("totalPoints", points.total_points);
-    console.log("appliedTotal", appliedTotal);
-    console.log("total", points.total_points - appliedTotal);
+    // console.log("totalPoints", points.total_points);
+    // console.log("appliedTotal", appliedTotal);
+    // console.log("total", points.total_points - appliedTotal);
 
     let possibleAdjustmentPoint = points.total_points - appliedTotal;
 
@@ -749,7 +747,7 @@ router.post("/apply/sponsor/adjustment", async (req, res) => {
         console.log("under 5000");
 
         let msg = `under ${_util.commaMoney(minAdjustmentPoints)} points`
-        return res.send(jresp.invalidData(msg, {min: minAdjustmentPoints}));
+        return res.send(jresp.invalidData(msg, { min: minAdjustmentPoints }));
     }
 
     if (Number(body.point_quantity) % 100 > 0) {
@@ -761,9 +759,9 @@ router.post("/apply/sponsor/adjustment", async (req, res) => {
     // let appliedTotal = await pointSv.getTotalAppliedAdjustmentByUserId(uid, 1);
     let appliedTotal = 0;
 
-    console.log("total_sponsored", points.total_sponsored);
-    console.log("appliedTotal", appliedTotal);
-    console.log("total", points.total_sponsored - appliedTotal);
+    // console.log("total_sponsored", points.total_sponsored);
+    // console.log("appliedTotal", appliedTotal);
+    // console.log("total", points.total_sponsored - appliedTotal);
 
     let possibleAdjustmentPoint = points.total_sponsored - appliedTotal;
 

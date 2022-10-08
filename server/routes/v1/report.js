@@ -3,12 +3,12 @@ const router = express.Router()
 const util = require('util')
 const reportSv = require("../../services/reportService")
 
-router.post("/post", async (req,res) => {
+router.post("/post", async (req, res) => {
 
     let body = req.body;
     body.target = "video"
 
-    if (!_util.hasKeys(body, "target_id", "reason", "content", "category_id" )) {
+    if (!_util.hasKeys(body, "target_id", "reason", "content", "category_id")) {
         console.log("not key");
         return res.json(jresp.invalidData());
     }
@@ -18,7 +18,7 @@ router.post("/post", async (req,res) => {
         return res.send(jresp.invalidData());
     }
 
-    if (_util.isBlanks(body.reason, body.content )) {
+    if (_util.isBlanks(body.reason, body.content)) {
         console.log("blank");
         return res.send(jresp.invalidData());
     }
@@ -27,13 +27,11 @@ router.post("/post", async (req,res) => {
 
     let chk = await reportSv.chkDuplicateReport("video", body.target_id, body.user_id);
 
-    console.log(chk)
-
     if (chk < 0) {
         return res.json(jresp.sqlError())
     }
 
-    else if (chk > 0 ) {
+    else if (chk > 0) {
         return res.json(jresp.duplicateData())
     }
 
@@ -42,12 +40,12 @@ router.post("/post", async (req,res) => {
 });
 
 
-router.post("/reply", async (req,res) => {
+router.post("/reply", async (req, res) => {
 
     let body = req.body;
     body.target = "reply"
 
-    if (!_util.hasKeys(body, "target_id", "reason", "content", "category_id" )) {
+    if (!_util.hasKeys(body, "target_id", "reason", "content", "category_id")) {
         console.log("not key");
         return res.json(jresp.invalidData());
     }
@@ -57,7 +55,7 @@ router.post("/reply", async (req,res) => {
         return res.send(jresp.invalidData());
     }
 
-    if (_util.isBlanks(body.reason, body.content )) {
+    if (_util.isBlanks(body.reason, body.content)) {
         console.log("blank");
         return res.send(jresp.invalidData());
     }
@@ -70,7 +68,7 @@ router.post("/reply", async (req,res) => {
         return res.json(jresp.sqlError())
     }
 
-    else if (chk > 0 ) {
+    else if (chk > 0) {
         return res.json(jresp.duplicateData())
     }
 
@@ -79,13 +77,11 @@ router.post("/reply", async (req,res) => {
 });
 
 
-router.get("/category", async (req,res) => {
+router.get("/category", async (req, res) => {
 
     let result = await reportSv.getReportCategory();
     return res.json(result);
 });
-
-
 
 
 module.exports = router;

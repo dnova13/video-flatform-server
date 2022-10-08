@@ -42,7 +42,7 @@ router.get("/day/in7days/join", async (req, res) => {
 
 /// 접속자 수 통계
 // 요일 별
-router.get("/day/inWeek/login", async (req, res) => {
+router.get("/day/in-week/login", async (req, res) => {
 
     let date = req.query.date;
 
@@ -68,7 +68,7 @@ router.get("/day/in7days/login", async (req, res) => {
 });
 
 /// 월별, 지난 1년간
-router.get("/month/inYear/login", async (req, res) => {
+router.get("/month/in-year/login", async (req, res) => {
 
     let date = req.query.date;
 

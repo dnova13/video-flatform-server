@@ -7,7 +7,7 @@ const { v4: uuidv4 } = require('uuid');
 const fs = require('fs-extra');
 
 
-// TODO :  용량 및 파일 개수 셋팅
+// 용량 및 파일 개수 셋팅
 const maxFileSize = 1 * 1024 * 1024; // 2 mb
 const maxVideoSize = 1 * 1024 * 1024 * 1024; // 1gb
 const maxCount = 20;
@@ -27,7 +27,8 @@ const maxCount = 20;
     }
 });*/
 
-function createDir(rootDir , subDir, useDateDir) {
+// 디렉토리 생성
+function createDir(rootDir, subDir, useDateDir) {
 
     const dateDir = useDateDir ? moment().format('/YYYYMMDD') : ""
     const _subDir = subDir ? `/${subDir}` : "";
@@ -42,7 +43,8 @@ function createDir(rootDir , subDir, useDateDir) {
     return path
 }
 
-const imgFilter = (req, file, cb) => { //파일의 허용 범위 체크
+//파일의 허용 범위 체크
+const imgFilter = (req, file, cb) => {
 
     let ext = "";
 
@@ -65,18 +67,12 @@ let videoStorage = multer.diskStorage({
 
     destination: function (req, file, cb) {
 
-        console.log("##des",file);
-        // let path = createDir(__upload_dir,"videos");
         let path = createDir(__upload_video_dir, "video/" + file.uuid);
-
         cb(null, path)  // server upload 경로
     },
 
     filename: function (req, file, cb) {
 
-        console.log("###file",file);
-        // cb(null, uuidv4() + ".mp4")
-        // cb(null, uuidv4().replaceAll("-","") + ".mp4");
         cb(null, file.uuid);
     }
 });
@@ -107,15 +103,13 @@ const videoFilter = (req, file, cb) => { //파일의 허용 범위 체크
     } catch (err) {
     }
 
-    console.log( "ext" , ext);
+    console.log("ext", ext);
 
     if (ext !== 'mp4' && ext !== 'mov' && ext !== 'quicktime') {
         cb(new Error('Only h264 codec is allowed'))
     }
 
-    console.log("11111", file)
-    // console.log(req)
-    file.uuid = uuidv4().replaceAll("-","");
+    file.uuid = uuidv4().replaceAll("-", "");
 
     cb(null, true)
 }
@@ -129,8 +123,6 @@ const pdfFilter = (req, file, cb) => { //파일의 허용 범위 체크
         ext = file.mimetype.split("/")[1];
     } catch (err) {
     }
-
-    // console.log("ext : ", ext);
 
     if (ext !== 'pdf') {
         cb(new Error('Only pdfs are allowed'))
@@ -151,41 +143,41 @@ const s3VideoUploader = multerS3({
     s3: s3,
     bucket: "haba-bucket/hls-videos",
     acl: "public-read",
-    key : function (req, file, cb) {
+    key: function (req, file, cb) {
 
-        cb(null, uuidv4().replaceAll("-",""));
+        cb(null, uuidv4().replaceAll("-", ""));
     }
 });
 
 export const filesUpload = multer({
-    dest : `${__upload_dir}${moment().format('/YYYYMMDD')}`,
-    limits : {fileSize : maxFileSize},
-    fileFilter : pdfFilter
+    dest: `${__upload_dir}${moment().format('/YYYYMMDD')}`,
+    limits: { fileSize: maxFileSize },
+    fileFilter: pdfFilter
 }).array("files", maxCount);
 
 export const imgUpload = multer({
-    dest : `${__upload_dir}${moment().format('/YYYYMMDD')}`,
-    limits : {fileSize : maxFileSize},
-    fileFilter : imgFilter
+    dest: `${__upload_dir}${moment().format('/YYYYMMDD')}`,
+    limits: { fileSize: maxFileSize },
+    fileFilter: imgFilter
 }).array("images", maxCount);
 
 export const videoUpload = multer({
-    storage : videoStorage,
-    limits : {fileSize: maxVideoSize}, // 3기가
-    fileFilter : videoFilter
+    storage: videoStorage,
+    limits: { fileSize: maxVideoSize }, // 3기가
+    fileFilter: videoFilter
 }).single("video");
 
 export const s3VideoUpload = multer({
     dest: "uploads/videos/",
     storage: s3VideoUploader,
-    limits : {fileSize: maxVideoSize}, // 3기가
-    fileFilter : videoFilter
+    limits: { fileSize: maxVideoSize }, // 3기가
+    fileFilter: videoFilter
 }).single("video");
 
 export const s3HlsUpload = multer({
-    storage : s3VideoStorage,
-    limits : {fileSize: maxVideoSize}, // 3기가
-    fileFilter : videoFilter
+    storage: s3VideoStorage,
+    limits: { fileSize: maxVideoSize }, // 3기가
+    fileFilter: videoFilter
 }).single("video");
 
 
@@ -194,7 +186,6 @@ let sampleStorage = multer.diskStorage({
 
     destination: function (req, file, cb) {
 
-        // let path = createDir(__upload_dir,"videos");
         let path = createDir(__upload_video_dir, "videos");
 
         cb(null, path)  // server upload 경로
@@ -202,9 +193,7 @@ let sampleStorage = multer.diskStorage({
 
     filename: function (req, file, cb) {
 
-        console.log(file);
-        // cb(null, uuidv4() + ".mp4")
-        cb(null, uuidv4().replace(/-/g,"") + ".mp4");
+        cb(null, uuidv4().replace(/-/g, "") + ".mp4");
     }
 });
 

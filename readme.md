@@ -1,3 +1,16 @@
+### app local test
+```
+npm test
+```
+
+### babel build
+```
+npm run build
+npm start
+```
+
+
+
 ### admin account  
 id : admin12  
 pw : 1q2w3e!  

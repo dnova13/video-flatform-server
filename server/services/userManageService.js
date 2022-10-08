@@ -1,9 +1,174 @@
 let userManageService = {}
 
+userManageService.chkSlang = async (str) => {
+
+    let sql = `select count(*) as cnt
+                from others_meta 
+                where \`type\` = 'slang'
+                and '${str}' like concat('%', value ,'%')`
+
+    let result = await db.qry(sql);
+    let chk = _util.selectChkFromDB(result);
+
+    if (chk < 1) {
+        return jresp.sqlError();
+    }
+
+    return jresp.successData({ is_slang: result["rows"][0]["cnt"] > 0 });
+}
+
+
+userManageService.signup = async (body) => {
+
+    let sql;
+    let sqlParams;
+    let result;
+    let keys = ['name', 'nickname', 'birth', 'phone', 'address', 'email', 'type', 'app_id'];
+
+    if (!_util.hasKeysArray(body, keys)) {
+
+        console.log("key err");
+        return jresp.invalidData();
+    }
+
+    if (_util.isObjectBlankArray(body, keys, keys.length)) {
+        console.log("blank err");
+        return jresp.invalidData();
+    }
+
+    sql = "INSERT INTO `user` (`name`, nickname, birth, phone, address, email, icon, gender)" +
+        "VALUES(:name, :nickname, :birth, :phone, :addr, :email, :icon, :gender) "
+    sqlParams = {
+        name: body['name']
+        , nickname: body['nickname']
+        , birth: body['birth']
+        , phone: body['phone']
+        , addr: body['address']
+        , email: body['email']
+        , icon: body['icon'] ? body['icon'] : 0
+        , gender: body['gender'] ? body['gender'] : 1
+    }
+
+    result = await db.qry(sql, sqlParams)
+
+    if (!result['success'] || result['rows'].length < 1) {
+        console.log(result)
+        return jresp.sqlError(result.message);
+    }
+
+    const uid = result['rows']['insertId']
+
+    sql = "INSERT INTO oauth (oauth_type, app_id, `password`, user_id) " +
+        "VALUES(:type, :app_id, password(:pw), :uid) ";
+    sqlParams = {
+        type: body['type']
+        , app_id: body['app_id']
+        , pw: body['password'] ? body['password'] : null
+        , uid: uid
+    }
+
+    result = await db.qry(sql, sqlParams)
+
+    if (!result['success'] || result['rows'].length < 1) {
+
+        return jresp.sqlError();
+    }
+
+    return jresp.successData();
+}
+
+userManageService.checkDuplicateEmail = async (email) => {
+
+    let sql;
+    let sqlP;
+    let result;
+
+    sql = "select count(*) as cnt " +
+        "from `user` " +
+        "where email = :email";
+    sqlP = { email: email }
+
+    result = await db.qry(sql, sqlP)
+
+    // sql err
+    if (!result['success']) {
+        console.error(result)
+        return jresp.sqlError();
+    }
+
+    if (result['rows'].length < 1) {
+        return jresp.sqlError();
+    }
+
+    if (result["rows"][0]["cnt"] < 1) {
+        return jresp.successData();
+    }
+
+    return jresp.duplicateData();
+}
+
+userManageService.checkDuplicateNickname = async (nickname) => {
+
+    let sql;
+    let sqlP;
+    let result;
+
+    sql = "select count(*) as cnt " +
+        "from `user` " +
+        "where nickname = :nickname";
+    sqlP = { nickname: nickname };
+
+    result = await db.qry(sql, sqlP)
+
+    // sql err
+    if (!result['success']) {
+        console.error(result)
+        return jresp.sqlError();
+    }
+
+    if (result['rows'].length < 1) {
+        return jresp.sqlError();
+    }
+
+    if (result["rows"][0]["cnt"] < 1) {
+        return jresp.successData();
+    }
+
+    return jresp.duplicateData();
+}
+
+userManageService.checkDuplicatePhone = async (phone) => {
+
+    let sql;
+    let sqlP;
+    let result;
+
+    sql = "select count(*) as cnt " +
+        "from `user` " +
+        "where phone = :phone";
+    sqlP = { phone: phone };
+
+    result = await db.qry(sql, sqlP)
+
+    // sql err
+    if (!result['success']) {
+        console.error(result)
+        return jresp.sqlError();
+    }
+
+    if (result['rows'].length < 1) {
+        return jresp.sqlError();
+    }
+
+    if (result["rows"][0]["cnt"] < 1) {
+        return jresp.successData();
+    }
+
+    return jresp.duplicateData();
+}
+
 
 userManageService.showOtherUserProfile = async (uid, fid) => {
-
-    console.log(uid);
 
     let sql = `select id, nickname, icon, following_cnt, follower_cnt  
                      , (select count(*) as cnt
@@ -15,7 +180,7 @@ userManageService.showOtherUserProfile = async (uid, fid) => {
                      , (select count(*) from follow where follower = a.id and user_id = :user_id) as follow_chk
                 from \`user\` a
                 where id = :follow`
-    let sqlParams = {user_id : uid, follow : fid }
+    let sqlParams = { user_id: uid, follow: fid }
 
     let result = await db.qry(sql, sqlParams);
 
@@ -48,17 +213,17 @@ userManageService.getUserProfile = async (uid) => {
     console.log(uid);
 
     let sql = "select id, nickname, icon, following_cnt, follower_cnt " +
-            ` , (select count(*) as cnt
+        ` , (select count(*) as cnt
                     from creator cr
                     inner join creator_apply ap
                     where cr.user_id = ap.user_id
                     and cr.user_id = :user_id
                     and ap.status = 1
                 ) as is_creator ` +
-            " , ifnull((select total_points from points where user_id = :user_id), 0) as total_points  " +
+        " , ifnull((select total_points from points where user_id = :user_id), 0) as total_points  " +
         "from `user` " +
         "where id = :user_id"
-    let sqlParams = {user_id : uid}
+    let sqlParams = { user_id: uid }
 
     let result = await db.qry(sql, sqlParams);
 
@@ -84,9 +249,9 @@ userManageService.getSettingInfo = async (uid) => {
 
 
     let sql = "select push_chk  " +
-                "from `user` " +
-                "where id = :user_id"
-    let sqlParams = {user_id : uid}
+        "from `user` " +
+        "where id = :user_id"
+    let sqlParams = { user_id: uid }
 
     let result = await db.qry(sql, sqlParams);
 
@@ -118,8 +283,8 @@ userManageService.setPush = async (uid) => {
     console.log(item);
 
     let sql = "update `user` " +
-                "set push_chk = push_chk * -1 + 1 " +
-                `where id = ${uid}`
+        "set push_chk = push_chk * -1 + 1 " +
+        `where id = ${uid}`
 
     result = await db.qry(sql);
 
@@ -151,7 +316,7 @@ userManageService.getUserInfo = async uid => {
     let sql = `select id, nickname, email, phone, address, icon, gender, name, birth, lv
                 from \`user\` 
                 where id = :user_id `
-    let sqlParams = {user_id : uid}
+    let sqlParams = { user_id: uid }
 
     let result = await db.qry(sql, sqlParams);
 
@@ -188,14 +353,14 @@ userManageService.modifyUserInfo = async body => {
                 where id = :user_id `
 
     let sqlParams = {
-        "nickname" : body.nickname ? body.nickname : "",
-        "email" : body.email ? body.email : "",
-        "phone" : body.phone ? body.phone : "",
-        "address" : body.address ? body.address : "",
-        "icon" : body.icon ? body.icon : 0,
-        "birth" : body.birth ? body.birth : 0,
-        "gender" : body.gender ? body.gender : 0,
-        "user_id" : body.user_id
+        "nickname": body.nickname ? body.nickname : "",
+        "email": body.email ? body.email : "",
+        "phone": body.phone ? body.phone : "",
+        "address": body.address ? body.address : "",
+        "icon": body.icon ? body.icon : 0,
+        "birth": body.birth ? body.birth : 0,
+        "gender": body.gender ? body.gender : 0,
+        "user_id": body.user_id
     }
 
     console.log(sqlParams)
@@ -216,7 +381,7 @@ userManageService.getMyInfoByUserId = async uid => {
     let sql = `select id, my_info
                 from \`user\` 
                 where id = :user_id `
-    let sqlParams = {user_id : uid}
+    let sqlParams = { user_id: uid }
 
     let result = await db.qry(sql, sqlParams);
 
@@ -243,8 +408,8 @@ userManageService.modifyMyInfo = async body => {
                 where id = :user_id `
 
     let sqlParams = {
-        "my_info" : body.my_info ? body.my_info : "",
-        "user_id" : body.user_id
+        "my_info": body.my_info ? body.my_info : "",
+        "user_id": body.user_id
     }
 
     console.log(sqlParams)
@@ -295,7 +460,7 @@ userManageService.searchMemberList = async (isCreator, suspendChk, limit, offset
     let order = ` order by a.create_at desc, a.id desc
                 limit ${limit} offset ${offset - 1}`
 
-    let condition = searchQry +  suspendChkCondition  + creatorCondition
+    let condition = searchQry + suspendChkCondition + creatorCondition
     let sql = head + condition + order;
 
     console.log(sql);
@@ -328,7 +493,7 @@ userManageService.searchMemberList = async (isCreator, suspendChk, limit, offset
                     ${condition}
                 ) b `
 
-    result = await db.qry(sql2 )
+    result = await db.qry(sql2)
 
     chk = _util.selectChkFromDB(result);
 
@@ -377,7 +542,7 @@ userManageService.getUserInfoMoreByUserId = async (uid) => {
     data.icon = _util.createImgDownPath(data.icon);
     data.is_creator = data.is_creator > 0;
 
-    return jresp.successData(data,1,1);
+    return jresp.successData(data, 1, 1);
 }
 
 // 크레이터 신청 정보 by uid
@@ -391,9 +556,9 @@ userManageService.getCreatorAppliedInfoByUserId = async (uid) => {
     let applyInfo = await db.qry(sql);
     let chk = _util.selectChkFromDB(applyInfo);
 
-    console.log("applyInfo",applyInfo);
+    console.log("applyInfo", applyInfo);
 
-    if (chk < 0)  {
+    if (chk < 0) {
         return jresp.sqlError()
     }
 
@@ -413,7 +578,7 @@ userManageService.getCreatorAppliedInfoByUserId = async (uid) => {
 
     // console.log("files",files);
 
-    if (chk < 0)  {
+    if (chk < 0) {
         return jresp.sqlError()
     }
 
@@ -442,7 +607,7 @@ userManageService.getCreatorAppliedInfoByUserId = async (uid) => {
         }
     }
 
-    return jresp.successData(item,1,1);
+    return jresp.successData(item, 1, 1);
 }
 
 
@@ -467,7 +632,7 @@ userManageService.getUploadedVideosByUserId = async (uid, limit, offset) => {
     let result1 = await db.qry(sql);
     let chk = _util.selectChkFromDB(result1);
 
-    if (chk < 0)  {
+    if (chk < 0) {
         return jresp.sqlError()
     }
 
@@ -483,7 +648,7 @@ userManageService.getUploadedVideosByUserId = async (uid, limit, offset) => {
     let result2 = await db.qry(sql2);
     chk = _util.selectChkFromDB(result2);
 
-    if (chk < 1)  {
+    if (chk < 1) {
         return jresp.sqlError()
     }
 
@@ -519,7 +684,7 @@ userManageService.getReplyListByUserId = async (uid, limit, offset) => {
     let result = await db.qry(sql);
     let chk = _util.selectChkFromDB(result);
 
-    if (chk < 0)  {
+    if (chk < 0) {
         return jresp.sqlError()
     }
 
@@ -537,7 +702,7 @@ userManageService.getReplyListByUserId = async (uid, limit, offset) => {
     result = await db.qry(sql2);
     chk = _util.selectChkFromDB(result);
 
-    if (chk < 1)  {
+    if (chk < 1) {
         return jresp.sqlError()
     }
 

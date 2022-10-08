@@ -4,7 +4,7 @@ const util = require('util')
 const reportSv = require("../../../services/reportService");
 
 
-router.get("/list/simple", async (req,res) => {
+router.get("/list/simple", async (req, res) => {
 
     let limit = req.query.limit;
     let offset = req.query.offset;
@@ -18,14 +18,12 @@ router.get("/list/simple", async (req,res) => {
     return res.json(result);
 });
 
-router.get("/list/video", async (req,res) => {
+router.get("/list/video", async (req, res) => {
 
     let limit = req.query.limit;
     let offset = req.query.offset;
     let keyword = req.query.keyword;
     let categoryId = req.query.category_id;
-
-    console.log(categoryId);
 
     if (!_util.hasKey(req.query, "keyword")) {
         console.log("not keyword")
@@ -51,7 +49,7 @@ router.get("/list/video", async (req,res) => {
 });
 
 
-router.get("/list/reply", async (req,res) => {
+router.get("/list/reply", async (req, res) => {
 
     let limit = req.query.limit;
     let offset = req.query.offset;
@@ -75,7 +73,6 @@ router.get("/list/reply", async (req,res) => {
     }
 
     if (categoryId < 0 || categoryId > 5) {
-        console.log("dd");
         return res.json(jresp.invalidData());
     }
 
@@ -83,7 +80,7 @@ router.get("/list/reply", async (req,res) => {
     return res.json(result);
 });
 
-router.post("/:type/blind/video", async (req,res) => {
+router.post("/:type/blind/video", async (req, res) => {
 
     let id = req.body.id;
     let chk = req.params.type
@@ -107,7 +104,7 @@ router.post("/:type/blind/video", async (req,res) => {
     return res.json(result);
 });
 
-router.post("/:type/blind/reply", async (req,res) => {
+router.post("/:type/blind/reply", async (req, res) => {
 
     let id = req.body.id;
     let chk = req.params.type
@@ -132,7 +129,7 @@ router.post("/:type/blind/reply", async (req,res) => {
 });
 
 
-router.get("/read", async (req,res) => {
+router.get("/read", async (req, res) => {
 
     let id = req.query.id;
     let type = req.query.type;
@@ -144,10 +141,10 @@ router.get("/read", async (req,res) => {
 
     switch (type) {
 
-        case "video" :
+        case "video":
             result = await reportSv.readReportVideoDetail(id);
             break;
-        case "reply" :
+        case "reply":
             result = await reportSv.readReportReplyDetail(id);
             break;
 

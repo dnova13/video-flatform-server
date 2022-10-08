@@ -7,15 +7,10 @@ const notifySv = require("../../services/notifyService");
 
 router.post("/check/:type", async (req, res) => {
 
-    // console.log("meta chk");
-
     let videoPostId = req.body.id;
     let postedUserId = req.body.user_id;
 
     let mType = req.params.type;
-
-    // console.log(videoPostId, mType);
-
     let types = ['like', 'dibs']
     let uid = req.uinfo["u"];
     let result
@@ -36,11 +31,9 @@ router.post("/check/:type", async (req, res) => {
 
     result = await isChkVideoMeta(uid, mType, videoPostId);
 
-    // console.log(result);
-
     switch (result) {
 
-        case 0 :
+        case 0:
             result = await chkVideoMeta(mType, uid, videoPostId);
             await dailyVideoSv.dailyChkVideo(mType, videoPostId)
 
@@ -53,26 +46,22 @@ router.post("/check/:type", async (req, res) => {
 
             break;
 
-        case 1 :
+        case 1:
             result = await unChkVideoMeta(mType, uid, videoPostId);
             await dailyVideoSv.dailyUnChkVideo(mType, videoPostId);
             break;
 
-        default :
+        default:
             return res.json(jresp.sqlError());
     }
-
-    // console.log("unchk ", result);
 
     return res.json(result);
 });
 
 router.post("/give/score", async (req, res) => {
 
-    // console.log("give score");
-
     let uid = req.uinfo["u"];
-    let body  = req.body;
+    let body = req.body;
 
     let result;
 
@@ -80,7 +69,7 @@ router.post("/give/score", async (req, res) => {
         return res.json(jresp.invalidData());
     }
 
-    if (!_util.isBeyondMinus(body.score)|| Number(body.score) > 5 ) {
+    if (!_util.isBeyondMinus(body.score) || Number(body.score) > 5) {
         console.error("beyond score ")
         return res.json(jresp.invalidData());
     }
@@ -96,8 +85,6 @@ router.post("/give/score", async (req, res) => {
 
     result = await isScoreByUserId(uid, "score", body.id);
 
-    // console.log(result)
-
     if (!result) {
         return res.json(jresp.sqlError());
     }
@@ -112,15 +99,13 @@ router.post("/give/score", async (req, res) => {
     let sql = `INSERT INTO video_post_meta (\`type\`, user_id, video_post_id, \`value\`) 
                 VALUES('score', :user_id, :video_post_id, :score ) `
 
-    let sqlParams = {user_id:uid, video_post_id : body.id, score: body.score};
+    let sqlParams = { user_id: uid, video_post_id: body.id, score: body.score };
 
     result = await db.qry(sql, sqlParams);
 
     if (!result['success'] || result['rows']['insertId'] < 1) {
         return res.json(jresp.sqlError())
     }
-
-    console.log("insId", result['rows']['insertId']);
 
     let sql2 = `update video_post 
                 set score_sum = score_sum + ${body.score}
@@ -132,15 +117,14 @@ router.post("/give/score", async (req, res) => {
 
     await dailyVideoSv.dailyChkVideo("score", body.id, body.score)
 
-    let avg = Math.round(((beforeSum + Number(body.score)) / (beforeCnt + 1))*100)/100
+    let avg = Math.round(((beforeSum + Number(body.score)) / (beforeCnt + 1)) * 100) / 100
 
-    return res.json(jresp.successData({"score" : avg}));
+    return res.json(jresp.successData({ "score": avg }));
 });
 
 router.post("/cancel/score", async (req, res) => {
 
     let body = req.body;
-
     let uid = req.uinfo["u"];
     let result
 
@@ -168,8 +152,6 @@ async function cancelScore(body) {
 
     result = await isScoreByUserId(uid, "score", videoPostId);
 
-    console.log(result)
-
     if (!result) {
         return jresp.sqlError();
     }
@@ -183,8 +165,8 @@ async function cancelScore(body) {
     let score = Number(result["user_score"])
 
     console.log("before sum", beforeSum)
-    console.log("before cnt ",beforeCnt)
-    console.log("your scr ",score)
+    console.log("before cnt ", beforeCnt)
+    console.log("your scr ", score)
 
     let sql1 = `update video_post a 
                 set a.score_cnt = if(a.score_cnt - 1 < 0, 0, a.score_cnt - 1)
@@ -192,8 +174,6 @@ async function cancelScore(body) {
                 where a.id = ${videoPostId}`
 
     result = await db.qry(sql1)
-
-    console.log(sql1)
 
     if (!_util.updateChkFromDB(result)) {
         console.log("update err")
@@ -219,11 +199,9 @@ async function cancelScore(body) {
 
     await db.qry(sql3);
 
-    console.log(beforeCnt - 1);
+    let avg = beforeCnt - 1 === 0 ? 0 : Math.round(((beforeSum - score) / (beforeCnt - 1)) * 100) / 100
 
-    let avg = beforeCnt - 1 === 0 ? 0 : Math.round(((beforeSum - score) / (beforeCnt - 1))*100)/100
-
-    return jresp.successData({score:avg ?  avg : 0});
+    return jresp.successData({ score: avg ? avg : 0 });
 }
 
 
@@ -238,7 +216,7 @@ async function isScoreByUserId(uid, type, videoPostId) {
                 from video_post a
                 where id = :video_post_id`
 
-    let sqlParams = {user_id:uid, type:type, video_post_id: videoPostId}
+    let sqlParams = { user_id: uid, type: type, video_post_id: videoPostId }
     let result = await db.qry(sql, sqlParams);
 
     if (!result['success'] || result['rows'].length < 1) {
@@ -249,16 +227,14 @@ async function isScoreByUserId(uid, type, videoPostId) {
 }
 
 
-async function getScoreByPostId( videoPostId) {
+async function getScoreByPostId(videoPostId) {
 
     let sql = `select score_cnt, score_sum  
                 from video_post 
                 where id = :video_post_id`
 
-    let sqlParams = {video_post_id: videoPostId}
+    let sqlParams = { video_post_id: videoPostId }
     let result = await db.qry(sql, sqlParams);
-
-    console.log(result)
 
     if (!result['success'] || result['rows'].length < 1) {
         return null
@@ -270,12 +246,12 @@ async function getScoreByPostId( videoPostId) {
 async function isChkVideoMeta(uid, type, videoPostId) {
 
     let sql = "select count(*) as cnt " +
-            "from video_post_meta " +
-            "where user_id = :user_id " +
-            "and `type` = :type " +
-            "and video_post_id = :video_post_id "
+        "from video_post_meta " +
+        "where user_id = :user_id " +
+        "and `type` = :type " +
+        "and video_post_id = :video_post_id "
 
-    let sqlParams = {user_id:uid, type:type, video_post_id: videoPostId}
+    let sqlParams = { user_id: uid, type: type, video_post_id: videoPostId }
     let result = await db.qry(sql, sqlParams);
 
     if (!result['success'] || result['rows'].length < 1) {
@@ -290,8 +266,8 @@ async function chkVideoMeta(type, uid, videoPostId) {
     console.log("chkVideoMeta");
 
     let sql = "INSERT INTO video_post_meta (`type`, user_id, video_post_id) " +
-                "VALUES(:type, :user_id, :video_post_id) "
-    let sqlParams = {user_id:uid, type:type, video_post_id : videoPostId}
+        "VALUES(:type, :user_id, :video_post_id) "
+    let sqlParams = { user_id: uid, type: type, video_post_id: videoPostId }
 
     let result = await db.qry(sql, sqlParams);
 
@@ -299,28 +275,22 @@ async function chkVideoMeta(type, uid, videoPostId) {
         return jresp.sqlError();
     }
 
-    console.log(result['rows']['insertId']);
-
     let sql2 = "update video_post " +
-                `set ${type}_cnt = ifnull(${type}_cnt,0) + 1 ` +
-                `where id = ${videoPostId} `
+        `set ${type}_cnt = ifnull(${type}_cnt,0) + 1 ` +
+        `where id = ${videoPostId} `
 
     result = await db.qry(sql2)
 
-    console.log(result['rows']['affectedRows']);
-
-    return jresp.successData({chk:true});
+    return jresp.successData({ chk: true });
 }
 
 async function unChkVideoMeta(type, uid, videoPostId) {
 
-    console.log("unchkVideoMeta");
-
     let sql = "delete from video_post_meta " +
-                "where video_post_id = :video_post_id " +
-                "and user_id = :user_id " +
-                "and `type` = :type ";
-    let sqlParams = {user_id:uid, type:type, video_post_id : videoPostId}
+        "where video_post_id = :video_post_id " +
+        "and user_id = :user_id " +
+        "and `type` = :type ";
+    let sqlParams = { user_id: uid, type: type, video_post_id: videoPostId }
 
     let result = await db.qry(sql, sqlParams);
 
@@ -328,17 +298,13 @@ async function unChkVideoMeta(type, uid, videoPostId) {
         return jresp.sqlError();
     }
 
-    console.log(result['rows']['affectedRows']);
-
     let sql2 = "update video_post " +
-                `set ${type}_cnt = if( ifnull(${type}_cnt, 0) - 1 < 0, 0, ifnull(${type}_cnt, 0) - 1) ` +
-                `where id = ${videoPostId} `
+        `set ${type}_cnt = if( ifnull(${type}_cnt, 0) - 1 < 0, 0, ifnull(${type}_cnt, 0) - 1) ` +
+        `where id = ${videoPostId} `
 
     result = await db.qry(sql2);
 
-    console.log(result['rows']['affectedRows']);
-
-    return jresp.successData({chk:false});
+    return jresp.successData({ chk: false });
 }
 
 
