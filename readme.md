@@ -104,4 +104,10 @@ AWS_HLS_URL = {cloudfront_hls_address}
 
 ```
 
-
+# pm2 scripts
+```
+pm2 start npm -- start : npm 스크립 실행
+pm2 monit : 모니터
+pm2 list : 앱 리스트 보기 
+pm2 delete [이름]
+```
