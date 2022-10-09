@@ -39,8 +39,6 @@ router.post('/upload/image', (req, res) => {
             let result;
             let fids = [];
 
-            console.log(files);
-
             if (!files) {
                 return res.json(jresp.uploadError())
             }
@@ -56,8 +54,6 @@ router.post('/upload/image', (req, res) => {
                 body.path = file.destination.replaceAll(__upload_dir, "") + "/" + file.filename;
 
                 result = await insertFile(body, 0)
-
-                console.log(result);
 
                 if (result > 0) {
                     fids.push(result);
@@ -98,8 +94,6 @@ router.post('/upload/files', (req, res) => {
             let files = req.files;
             let result;
             let fids = [];
-
-            console.log(files);
 
             if (!files) {
                 return res.json(jresp.uploadError())
@@ -157,7 +151,6 @@ router.post('/upload/video', (req, res) => {
             let file = req.file;
             let result;
 
-            console.log(file)
             if (!file) {
                 return res.send(jresp.uploadError())
             }
