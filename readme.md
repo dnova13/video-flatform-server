@@ -1,9 +1,9 @@
-### app local test
+# app local test
 ```
 npm test
 ```
 
-### babel build
+# babel build
 ```
 npm run build
 npm start
@@ -11,16 +11,16 @@ npm start
 
 
 
-### admin account  
+# admin account  
 ```
 id : admin12  
 pw : 1q2w3e!  
 ```
 
 
-### err code
+# err code
 
-#### common
+### common
 ```
 1000 : success  
 1001 : empty data  
@@ -42,7 +42,7 @@ pw : 1q2w3e!
 1017 : retire user : 탈퇴 유저          
 ```
 
-#### order err
+### order err
 ```
 2001 : 주문 번호 생성 실패  
 2002 : 주문 취소 불가   
@@ -54,7 +54,7 @@ pw : 1q2w3e!
 ```
 
 
-### .env 설정
+# .env 설정
 ```
 
 # service port
