@@ -120,3 +120,7 @@ dist
 
 # build
 /build
+
+# maria docker
+/mariadb/maria_data
+/mariadb/sqls

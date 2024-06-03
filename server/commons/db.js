@@ -3,112 +3,119 @@ function DB(pool) {
         return new DB(pool);
     }
 
-    this.pool = pool
+    this.pool = pool;
+
+    // db 연결 성공 여부 알림.
+    this.pool.getConnection((err, connection) => {
+        if (err) {
+            console.error('MySQL 연결에 실패했습니다:', err);
+        } else {
+            console.log('MySQL에 성공적으로 연결되었습니다.');
+        }
+    });
 
     this.pool.config.connectionConfig.queryFormat = function (query, values) {
-
         if (!values) return query;
 
-        return query.replace(/\:(\w+)/g, function (txt, key) {
-            if (values.hasOwnProperty(key)) {
-                return this.escape(values[key]);
-            }
-            return txt;
-        }.bind(this));
+        return query.replace(
+            /\:(\w+)/g,
+            function (txt, key) {
+                if (values.hasOwnProperty(key)) {
+                    return this.escape(values[key]);
+                }
+                return txt;
+            }.bind(this)
+        );
     };
 }
 
 DB.prototype.qry = function (qry, params) {
     return new Promise((resolve, reject) => {
-
         if (!this.pool) {
-            console.error("not found db pool")
+            console.error('not found db pool');
             // console.error("not found db pool");
 
-            let res = {success: false}
+            let res = { success: false };
             //reject(new Error("db conn error"))
-            resolve(res)
-            return
+            resolve(res);
+            return;
         }
 
         this.pool.getConnection((err, conn) => {
-
             if (err) {
-                console.error(err.stack)
+                console.error(err.stack);
 
-                if (conn && conn.hasOwnProperty('release')) conn.release()
+                if (conn && conn.hasOwnProperty('release')) conn.release();
 
-                let res = {success: false}
+                let res = { success: false };
                 //reject(new Error("db conn error"))
-                resolve(res)
-                return
+                resolve(res);
+                return;
             }
 
             conn.query(qry, params, (err, rows, fin) => {
-                let res = {}
+                let res = {};
 
                 if (err) {
-                    console.error(err.stack)
+                    console.error(err.stack);
                     // console.error(e.stack);
-                    res = err
-                    res['success'] = false
-                    conn.release()
-                    resolve(res)
-                    return
+                    res = err;
+                    res['success'] = false;
+                    conn.release();
+                    resolve(res);
+                    return;
                 }
 
-                res['success'] = true
-                res['rows'] = rows
+                res['success'] = true;
+                res['rows'] = rows;
 
                 // console.log(fin);
 
-                conn.release()
-                resolve(res)
-            })
-        })
-    })
-}
+                conn.release();
+                resolve(res);
+            });
+        });
+    });
+};
 
-DB.prototype.getConn = function() {
+DB.prototype.getConn = function () {
     return new Promise((resolve, reject) => {
         this.pool.getConnection((err, conn) => {
             if (err) {
-                reject(err)
-                return
+                reject(err);
+                return;
             }
 
-            resolve(conn)
-        })
-    })
-}
+            resolve(conn);
+        });
+    });
+};
 
-DB.prototype.execQry = function(conn, qry, params) {
+DB.prototype.execQry = function (conn, qry, params) {
     return new Promise((resolve, reject) => {
-
         if (params && params.hasOwnProperty && params.hasOwnProperty('p')) {
             if (!params.hasOwnProperty('limit')) {
-                params['limit'] = 10
+                params['limit'] = 10;
             }
 
             if (params.page < 1) {
-                params.page = 0
+                params.page = 0;
             } else {
-                params.page -= 1
+                params.page -= 1;
             }
 
-            params.page *= params.limit
+            params.page *= params.limit;
         }
 
-        conn.query(conn, params, (err,result,final) => {
-
+        conn.query(conn, params, (err, result, final) => {
             if (err) {
-                reject(err)
-                return
+                reject(err);
+                return;
             }
 
-            resolve(result)
-        })
-    })
-}
+            resolve(result);
+        });
+    });
+};
 
-module.exports = DB
+module.exports = DB;
