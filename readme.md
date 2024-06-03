@@ -1,9 +1,9 @@
-### app local test
+# app local test
 ```
 npm test
 ```
 
-### babel build
+# babel build
 ```
 npm run build
 npm start
@@ -11,14 +11,17 @@ npm start
 
 
 
-### admin account  
+# admin account  
+```
 id : admin12  
 pw : 1q2w3e!  
+```
 
 
-### err code
+# err code
 
-#### common
+### common
+```
 1000 : success  
 1001 : empty data  
 1002 : invalid data  
@@ -37,9 +40,10 @@ pw : 1q2w3e!
 1015 : same user  
 1016 : suspended user : 정지된 유저  
 1017 : retire user : 탈퇴 유저          
+```
 
-
-#### order err
+### order err
+```
 2001 : 주문 번호 생성 실패  
 2002 : 주문 취소 불가   
 2003 : pg사 데이터 조회 실패     
@@ -47,10 +51,10 @@ pw : 1q2w3e!
 2005 : 구매 실패  
 2006 : 변조된 구매 데이터 대한 처리 오류     
 2007 : 유효하지 않은 구매 데이터     
+```
 
 
-
-### .env 설정
+# .env 설정
 ```
 
 # service port
