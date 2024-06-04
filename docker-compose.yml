@@ -6,21 +6,26 @@ services:
             dockerfile: Dockerfile
         container_name: video_backend
         ports:
-            - '3100:3100'
+            - '3010:3010'
         # 최대 메모리양 설정 : 128m : 적은양 간단한 작업식 적절
         mem_limit: 128m
+        depends_on:
+            - mariadb # MariaDB가 시작된 후에 backend 시작
 
     mariadb:
         build:
             context: ./mariadb
             dockerfile: Dockerfile
         restart: unless-stopped
-        container_name: mariadb
+        container_name: app_maria
         ports:
-            - '63100:3306'
+            - '63110:3306'
         volumes:
-            - ./mariadb/maria_data:/var/lib/mysql
+            # - ./mariadb/maria_data:/var/lib/mysql
             - ./mariadb/sqls/:/docker-entrypoint-initdb.d/
+        # 환경 변수 셋팅시에는 `-` 는 생략한다.
         environment:
-            MARIADB_DATABASE: ${DB_HOST}
+            MARIADB_DATABASE: ${DB_NAME}
+            MARIADB_USER: ${DB_USER}
             MARIADB_ROOT_PASSWORD: ${DB_PASS}
+            TZ: ${TIME_ZONE}

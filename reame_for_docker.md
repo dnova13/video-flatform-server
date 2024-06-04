@@ -39,3 +39,15 @@ docker-compose up
 # background
 docker-compose up -d
 ```
+
+-   이미지 유무 상관없이 모든 이미지를 빌드하고 컨테이너 생성 및 실행
+
+```
+docker-compose up --build
+```
+
+# volumns 전부 삭제
+
+```
+docker volume prune
+```
