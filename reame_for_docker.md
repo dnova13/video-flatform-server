@@ -17,7 +17,7 @@ docker run -p 3010:3010 jun/node
 
 
 ## background
-docker run -p 3010:3010 -name vi-server -d jun/node
+docker run -p 3010:3010 --name vi-server -d jun/node
 
 ```
 
