@@ -1,0 +1,18 @@
+version: '3'
+services:
+    nginx:
+        build:
+            context: ./nginx_imageserver
+            dockerfile: Dockerfile
+        container_name: image-server
+        restart: always # 컨테이너가 중지될 때마다 항상 재시작합니다.
+        volumes:
+            - ./nginx_imageserver/nginx.conf:/etc/nginx/conf.d/nginx.conf
+            # nginx log 와 동기화
+            - ./nginx_imageserver/logs:/usr/local/nginx/logs/
+            # hls 설정으로 인한 파일삭제로 인해 그 삭제를 막기 위해 로컬 호스트 파일은 :ro 를 붙여 읽기 전용으로 설정
+            - /home/images/video
+            - ./uploads:/home/images:ro
+            - ./uploads:/home/files:ro
+        ports:
+            - '63100:8080'

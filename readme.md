@@ -125,3 +125,5 @@ pm2 delete [이름]
 systemctl restart nginx
 service nginx restart
 ```
+
+http://localhost:5050/hls/ca/ca.m3u8

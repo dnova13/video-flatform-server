@@ -38,6 +38,10 @@ docker-compose up
 
 # background
 docker-compose up -d
+
+
+# file
+docker-compose -f <파일이름> up
 ```
 
 -   이미지 유무 상관없이 모든 이미지를 빌드하고 컨테이너 생성 및 실행
@@ -51,3 +55,11 @@ docker-compose up --build
 ```
 docker volume prune
 ```
+
+# docker에 불필요 한 데이터 제거 명령어
+
+```
+docker system prune -a
+```
+
+docker run -p 5050:8080 -v ./uploads/video/:/home/media/hls
