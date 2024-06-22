@@ -123,4 +123,4 @@ dist
 
 # maria docker
 /mariadb/maria_data
-/mariadb/sqls
+# /mariadb/sqls

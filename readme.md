@@ -126,4 +126,5 @@ systemctl restart nginx
 service nginx restart
 ```
 
-http://localhost:5050/hls/ca/ca.m3u8
+http://localhost/hls/ca/ca.m3u8
+http://localhost/hls/7859256a97a94b3d9ebbebbfb4b4e342/7859256a97a94b3d9ebbebbfb4b4e342.m3u8

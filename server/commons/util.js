@@ -311,7 +311,7 @@ utils.createVideoDownPath = (_id) => {
     host = '';
 
     // cloudfront 프리터티어 비용 문제로 주석처리 : 따로 미디어서버 없이 s3 를 통해 ec2 dns로도 가능.
-    // host = process.env.IS_AWS ? process.env.AWS_HLS_URL: "";
+    host = process.env.IS_AWS ? process.env.AWS_HLS_URL : '';
 
     return _id ? `${host}/hls/${_id}/${_id}.m3u8` : null;
 };
