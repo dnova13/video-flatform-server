@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.5.62, for Win64 (AMD64)
 --
--- Host: localhost    Database: video-flatform
+-- Host: localhost    Database: video-platform
 -- ------------------------------------------------------
 -- Server version	11.4.2-MariaDB-ubu2404
 
@@ -774,11 +774,11 @@ INSERT INTO `video_post_meta` VALUES (2,'score',2,5,'3',NULL,NULL),(19,'like',1,
 UNLOCK TABLES;
 
 --
--- Dumping events for database 'video-flatform'
+-- Dumping events for database 'video-platform'
 --
 
 --
--- Dumping routines for database 'video-flatform'
+-- Dumping routines for database 'video-platform'
 --
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
