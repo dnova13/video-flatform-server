@@ -71,24 +71,23 @@ const _jwt = require(__base + '/commons/jwt');
 // level: 1 - no output, 2 - default, 3 - info, 4 - warn, 5 - error
 const logLevel = process.env.LOG_LEVEL || 5;
 
-async function main() {
+function main() {
     /// fcm 초기화
     const fcm = require(__base + '/commons/fcm');
     global._fcm = new fcm();
 
     // log.d('# load logger success')
-    global.db = _db(
-        mysql.createPool({
-            host: process.env.DB_HOST,
-            user: process.env.DB_USER,
-            password: process.env.DB_PASS,
-            port: process.env.DB_PORT,
-            database: process.env.DB_NAME,
-            connectionLimit: process.env.DB_POOL,
-            dateStrings: 'date',
-        })
-    );
+    const dbPool = mysql.createPool({
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASS,
+        port: process.env.DB_PORT,
+        database: process.env.DB_NAME,
+        connectionLimit: process.env.DB_POOL,
+        dateStrings: 'date',
+    });
 
+    global.db = _db(dbPool);
     global.jwt = _jwt(process.env.JWT_SECRET);
 
     // static
@@ -117,7 +116,7 @@ async function main() {
         return res.status(500).send();
     });
 
-    app.listen(port, () => {
+    const server = app.listen(port, () => {
         console.log(`Listening on: http://localhost:${port}`);
     });
 
@@ -128,6 +127,8 @@ async function main() {
             db.qry('select 1')
         }, 1000*60*3);
     */
+
+    return { app, server, dbPool };
 }
 
-main();
+module.exports = main;

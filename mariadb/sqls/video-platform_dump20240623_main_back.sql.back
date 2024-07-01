@@ -36,7 +36,7 @@ CREATE TABLE `creator` (
   `update_at` datetime DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `creator_user_id_IDX` (`user_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -71,7 +71,7 @@ CREATE TABLE `creator_apply` (
   `update_at` datetime DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   UNIQUE KEY `creator_apply_user_id_IDX` (`user_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=81 DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB AUTO_INCREMENT=81 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -100,7 +100,7 @@ CREATE TABLE `daily_statistics` (
   `update_at` datetime DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   UNIQUE KEY `daily_statistics_daily_date_IDX` (`daily_date`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=1534 DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB AUTO_INCREMENT=1534 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -132,7 +132,7 @@ CREATE TABLE `daily_video_manager` (
   PRIMARY KEY (`id`),
   KEY `daily_video_manager_video_post_id_IDX` (`video_post_id`) USING BTREE,
   KEY `daily_video_manager_daily_date_IDX` (`daily_date`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=290 DEFAULT CHARSET=utf8mb4  COMMENT='일별 화제 영상 관리';
+) ENGINE=InnoDB AUTO_INCREMENT=290 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='일별 화제 영상 관리';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -164,7 +164,7 @@ CREATE TABLE `files` (
   `create_at` datetime DEFAULT current_timestamp(),
   `update_at` datetime DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=788 DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB AUTO_INCREMENT=788 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -197,7 +197,7 @@ CREATE TABLE `files_meta` (
   KEY `img_meta_file_id_IDX` (`file_id`) USING BTREE,
   KEY `img_meta_parent_IDX` (`parent`) USING BTREE,
   KEY `img_meta_img_key_IDX` (`file_key`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=163 DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB AUTO_INCREMENT=163 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -226,7 +226,7 @@ CREATE TABLE `follow` (
   PRIMARY KEY (`id`),
   KEY `follow_user_id_IDX` (`user_id`) USING BTREE,
   KEY `follow_follower_IDX` (`follower`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=159 DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB AUTO_INCREMENT=159 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -261,7 +261,7 @@ CREATE TABLE `notify_history` (
   KEY `notify_history_target_id_IDX` (`target_id`) USING BTREE,
   KEY `notify_history_user_id_IDX` (`user_id`) USING BTREE,
   KEY `notify_history_notified_id_IDX` (`relation_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=476 DEFAULT CHARSET=utf8mb4  COMMENT='알림 내역';
+) ENGINE=InnoDB AUTO_INCREMENT=476 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='알림 내역';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -293,7 +293,7 @@ CREATE TABLE `oauth` (
   PRIMARY KEY (`id`),
   KEY `oauth_app_id_IDX` (`app_id`) USING BTREE,
   KEY `oauth_user_id_IDX` (`user_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=99 DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB AUTO_INCREMENT=99 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -323,7 +323,7 @@ CREATE TABLE `other_post_meta` (
   `update_at` datetime NOT NULL DEFAULT current_timestamp(),
   `file_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8mb4  COMMENT='공지 및 건의 사항';
+) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='공지 및 건의 사항';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -355,7 +355,7 @@ CREATE TABLE `others_meta` (
   KEY `others_meta_type_IDX` (`type`) USING BTREE,
   KEY `others_meta_id_key_IDX` (`id_key`) USING BTREE,
   KEY `others_meta_parent_id_IDX` (`parent_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=557 DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB AUTO_INCREMENT=557 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -384,7 +384,7 @@ CREATE TABLE `points` (
   `user_id` bigint(20) DEFAULT NULL COMMENT '사용자 아이디',
   PRIMARY KEY (`id`),
   UNIQUE KEY `points_user_id_IDX` (`user_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=81 DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB AUTO_INCREMENT=81 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -419,7 +419,7 @@ CREATE TABLE `points_history` (
   PRIMARY KEY (`id`),
   KEY `points_history_user_id_IDX` (`user_id`) USING BTREE,
   KEY `points_history_update_at_IDX` (`update_at`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=125 DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB AUTO_INCREMENT=125 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -455,7 +455,7 @@ CREATE TABLE `reply_at_video` (
   KEY `reply_at_video_video_post_id_IDX` (`video_post_id`) USING BTREE,
   KEY `reply_at_video_user_id_IDX` (`user_id`) USING BTREE,
   KEY `reply_at_video_target_id_IDX` (`target_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=288 DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB AUTO_INCREMENT=288 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -486,7 +486,7 @@ CREATE TABLE `report_history` (
   `create_at` datetime DEFAULT current_timestamp(),
   `update_at` datetime DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4  COMMENT='신고 내역 테이블';
+) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='신고 내역 테이블';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -516,7 +516,7 @@ CREATE TABLE `retire_history` (
   `create_at` datetime DEFAULT current_timestamp(),
   `update_at` datetime DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -546,7 +546,7 @@ CREATE TABLE `sponsor_history` (
   `create_at` datetime DEFAULT current_timestamp(),
   `update_at` datetime DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=80 DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB AUTO_INCREMENT=80 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -577,7 +577,7 @@ CREATE TABLE `tags` (
   `update_at` datetime DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   UNIQUE KEY `tags_un` (`tag`)
-) ENGINE=InnoDB AUTO_INCREMENT=885 DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB AUTO_INCREMENT=885 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -609,7 +609,7 @@ CREATE TABLE `transactions` (
   `update_at` datetime DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `transactions_user_id_IDX` (`user_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=utf8mb4  COMMENT='정산관리 테이블';
+) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci COMMENT='정산관리 테이블';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -653,7 +653,7 @@ CREATE TABLE `user` (
   `update_at` datetime DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_nickname_IDX` (`nickname`,`phone`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=133 DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB AUTO_INCREMENT=133 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -686,7 +686,7 @@ CREATE TABLE `video_manager` (
   PRIMARY KEY (`id`),
   KEY `video_manager_parent_id_IDX` (`parent_id`) USING BTREE,
   KEY `video_manager_video_post_id_IDX` (`video_post_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=164 DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB AUTO_INCREMENT=164 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -728,7 +728,7 @@ CREATE TABLE `video_post` (
   PRIMARY KEY (`id`),
   KEY `video_post_user_id_IDX` (`user_id`) USING BTREE,
   KEY `video_post_video_IDX` (`video`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=439 DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB AUTO_INCREMENT=439 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -760,7 +760,7 @@ CREATE TABLE `video_post_meta` (
   KEY `video_post_meta_user_id_IDX` (`user_id`) USING BTREE,
   KEY `video_post_meta_type_IDX` (`type`) USING BTREE,
   KEY `video_post_meta_video_post_id_IDX` (`video_post_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=508 DEFAULT CHARSET=utf8mb4 ;
+) ENGINE=InnoDB AUTO_INCREMENT=508 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

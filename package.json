@@ -5,17 +5,17 @@
     "main": "app.js",
     "scripts": {
         "build": "babel server -d build",
-        "test": "nodemon --exec babel-node server/app.js --delay 3",
-        "dev": "babel-node server/app.js",
-        "start": "node build/app.js"
+        "dev": "nodemon --exec babel-node server/init.js --delay 3",
+        "dev1": "babel-node server/init.js",
+        "start": "node build/init.js",
+        "test": "mocha --require @babel/register test/deploy_test.js"
     },
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "@babel/node": "^7.12.6",
-        "@babel/preset-env": "^7.12.7",
         "@ffmpeg-installer/ffmpeg": "^1.1.0",
         "@ffprobe-installer/ffprobe": "^1.1.0",
+        "assert": "^2.1.0",
         "aws-sdk": "^2.1029.0",
         "axios": "^0.21.1",
         "bcryptjs": "^2.4.3",
@@ -30,6 +30,7 @@
         "fs-extra": "^9.0.1",
         "helmet": "^4.4.0",
         "jsonwebtoken": "^8.5.1",
+        "mocha": "^10.5.2",
         "moment": "^2.29.1",
         "morgan": "^1.10.0",
         "multer": "^1.4.2",
@@ -38,10 +39,14 @@
         "nodemon": "^2.0.6",
         "numeral": "^2.0.6",
         "pug": "^3.0.0",
+        "supertest": "^7.0.0",
         "uuid": "^8.3.1"
     },
     "devDependencies": {
         "@babel/cli": "^7.16.0",
-        "@babel/core": "^7.16.0"
+        "@babel/core": "^7.16.0",
+        "@babel/node": "^7.24.7",
+        "@babel/preset-env": "^7.24.7",
+        "@babel/register": "^7.24.6"
     }
 }
