@@ -58,7 +58,7 @@ services:
         # 최대 메모리양 설정 : 128m : 적은양 간단한 작업식 적절
         mem_limit: 128m
         ports:
-            - '3306:3306'
+            - '63100:3306'
         volumes:
             - ./mariadb/maria_data:/var/lib/mysql
             - ./mariadb/sqls/:/docker-entrypoint-initdb.d/
