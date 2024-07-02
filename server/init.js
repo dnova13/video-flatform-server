@@ -1,3 +1,4 @@
 import main from './app';
 
-main();
+const port = process.env.PORT || 4001;
+main(port);

@@ -13,7 +13,6 @@ dotenv.config();
 // console.log(process.env.id) ;
 
 const app = express(); // 변수 app을 선언하여 expreess 실행
-const port = process.env.PORT || 4001;
 
 // app init
 // 글로벌 객체 : 전역 지정
@@ -71,7 +70,7 @@ const _jwt = require(__base + '/commons/jwt');
 // level: 1 - no output, 2 - default, 3 - info, 4 - warn, 5 - error
 const logLevel = process.env.LOG_LEVEL || 5;
 
-function main() {
+function main(port = 3000) {
     /// fcm 초기화
     const fcm = require(__base + '/commons/fcm');
     global._fcm = new fcm();
